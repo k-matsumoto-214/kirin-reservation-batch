@@ -1,0 +1,16 @@
+mybatis:
+  mapper-locations: classpath*:/sql/*.xml
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: 8081
+
+line:
+  bot:
+    handler:
+      path: /callback
+    image:
+      kirin: /static/image/kirin_reserve.jpeg
