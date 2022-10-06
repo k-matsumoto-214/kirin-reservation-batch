@@ -1,21 +1,16 @@
 package com.kirin.reservation;
 
-import org.springframework.boot.Banner;
-import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableRetry
+@Retryable
+@EnableScheduling
 public class ReservationApplication {
 
 	public static void main(String[] args) {
-
-		new SpringApplicationBuilder(ReservationApplication.class)
-				.web(WebApplicationType.NONE)
-				.bannerMode(Banner.Mode.OFF)
-				.run(args);
-
+		SpringApplication.run(ReservationApplication.class, args);
 	}
 }

@@ -21,3 +21,5 @@ kirin:
 
 selenium:
   host: ${SELENIUM_HOST}
+
+cron: ${CRON}

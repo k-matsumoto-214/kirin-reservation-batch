@@ -28,5 +28,10 @@
     "name": "kirin.start-time",
     "type": "java.lang.String",
     "description": "TIME TO START RESERVATION"
+  },
+  {
+    "name": "cron",
+    "type": "java.lang.String",
+    "description": "cron for app"
   }
 ]}

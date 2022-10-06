@@ -25,3 +25,5 @@ selenium:
 logging:
   file:
     name: ${LOG_PATH}
+
+cron: ${CRON}

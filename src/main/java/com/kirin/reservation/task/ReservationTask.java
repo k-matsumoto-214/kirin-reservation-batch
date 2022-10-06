@@ -1,11 +1,10 @@
-package com.kirin.reservation.runner;
+package com.kirin.reservation.task;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.kirin.reservation.model.ReservationDate;
@@ -20,14 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ReservationApplicationRunner implements ApplicationRunner {
+public class ReservationTask {
 
   private final ReservationService reservationService;
 
   private final LineMessageService lineMessageService;
 
-  @Override
-  public void run(ApplicationArguments args) throws Exception {
+  @Scheduled(cron = "${cron}")
+  public void executeReservation() {
     LocalDate now = LocalDate.now(); // 実行日付を取得
 
     // DBに登録されている実行日の予約情報を取得
