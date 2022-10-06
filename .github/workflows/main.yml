@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Execute ssh
+      uses: appleboy/ssh-action@master
+      with:
+        key: ${{ secrets.SSH_KEY }}
+        host: ${{secrets.SSH_HOST}}
+        username: ${{secrets.SSH_USERNAME}}
+        port: ${{secrets.SSH_PORT}}
+        script: |
+          cd ~/repository/kirin-reservation-batch
+          git pull origin master
+          mvn -B package --file pom.xml
+          systemctl --user restart kirin-reservation-batch
+          
+            
