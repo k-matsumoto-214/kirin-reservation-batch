@@ -1,13 +1,19 @@
 package com.kirin.reservation;
 
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.Banner;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
 public class ReservationApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ReservationApplication.class, args);
-	}
 
+		new SpringApplicationBuilder(ReservationApplication.class)
+				.web(WebApplicationType.NONE)
+				.bannerMode(Banner.Mode.OFF)
+				.run(args);
+
+	}
 }

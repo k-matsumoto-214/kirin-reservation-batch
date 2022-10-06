@@ -4,7 +4,24 @@ spring:
     username: KIRIN_PROD
     password: ${MYSQL_PASSWORD}
 
+server:
+  port: ${APP_PORT}
+
 line:
   bot:
     channel-token: ${LINE_BOT_CHANNEL_TOKEN}
     channel-secret: ${LINE_BOT_CHANNEL_SECRET}
+    group-id: ${LINE_BOT_GROUP_ID}
+
+kirin:
+  user: ${KIRIN_USER}
+  password: ${KIRIN_PASSWORD}
+  url: ${KIRIN_URL}
+  start-time: ${KIRIN_START_TIME}
+
+selenium:
+  host: ${SELENIUM_HOST}
+
+logging:
+  file:
+    name: ${LOG_PATH}

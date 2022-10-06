@@ -21,11 +21,6 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
     <!-- https://mvnrepository.com/artifact/com.linecorp.bot/line-bot-spring-boot -->
     <dependency>
       <groupId>com.linecorp.bot</groupId>
@@ -76,8 +71,7 @@
 			<artifactId>selenium-java</artifactId>
 			<version>${selenium.version}</version>
 		</dependency>
-
-
+    
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
@@ -86,6 +80,7 @@
   </dependencies>
 
   <build>
+    <finalName>reservation-batch</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

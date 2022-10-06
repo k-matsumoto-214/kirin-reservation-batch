@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "line.bot.group-id",
+    "type": "java.lang.String",
+    "description": "DESTINATION OF MESSAGE"
+  },
+  {
+    "name": "selenium.host",
+    "type": "java.lang.String",
+    "description": "PATH TO SELENIUM"
+  },
+  {
+    "name": "kirin.user",
+    "type": "java.lang.String",
+    "description": "USER FOR KIRIN"
+  },
+  {
+    "name": "kirin.password",
+    "type": "java.lang.String",
+    "description": "PASSWORD FOR KIRIN"
+  },
+  {
+    "name": "kirin.url",
+    "type": "java.lang.String",
+    "description": "URL TO KIRIN"
+  },
+  {
+    "name": "kirin.start-time",
+    "type": "java.lang.String",
+    "description": "TIME TO START RESERVATION"
+  }
+]}
