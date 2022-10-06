@@ -24,6 +24,5 @@ jobs:
           cd ~/repository/kirin-reservation-batch
           git pull origin master
           mvn -B package --file pom.xml
-          systemctl --user restart kirin-reservation-batch
           
             
