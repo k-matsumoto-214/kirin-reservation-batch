@@ -12,6 +12,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import com.kirin.reservation.config.StartDateTimeConfig;
@@ -49,7 +50,7 @@ public class ReservationService {
    * @throws MalformedURLException
    * @throws InterruptedException
    */
-
+  @Retryable
   public ReservationDateList findReserVationTarget(LocalDate targeDate) {
 
     // DBから予約情報を取得
@@ -63,7 +64,7 @@ public class ReservationService {
    * @return 予約受付番号
    * @throws MalformedURLException
    */
-  public int reserve(String targetName) throws MalformedURLException {
+  public int reserve(String targetName) {
     try {
       log.info("{}の予約を開始", targetName);
       webDriver.get(kirinUrl);
