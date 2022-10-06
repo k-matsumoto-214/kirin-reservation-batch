@@ -34,7 +34,7 @@ public class LineMessageService {
       lineMessagingClient.pushMessage(pushMessage).get();
       return true;
     } catch (Exception e) {
-      log.error("LINE通知に失敗しちゃった。。。 原因: {}", e);
+      log.error("LINE通知に失敗しちゃった。。。 原因: {}", e.toString());
       return false;
     }
   }

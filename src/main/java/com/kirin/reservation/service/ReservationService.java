@@ -153,7 +153,7 @@ public class ReservationService {
       return Integer.parseInt(reservedOrder);
 
     } catch (Exception e) {
-      log.error("{}の予約中にエラー発生 原因: {}", targetName, e);
+      log.error("{}の予約中にエラー発生 原因: {}", targetName, e.toString());
       throw new RuntimeException(e);
     } finally {
       webDriver.quit();

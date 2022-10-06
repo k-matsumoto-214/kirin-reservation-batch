@@ -17,8 +17,8 @@ public class WebDriverConfig {
 
   // seleniumに渡すオプションを定義
   private static final ChromeOptions chromeOptions = new ChromeOptions()
-      .addArguments("--no-sandbox", "--disable-dev-shm-usage")
-      // .addArguments("--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage")
+      // .addArguments("--no-sandbox", "--disable-dev-shm-usage")
+      .addArguments("--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage")
       .setHeadless(false);
 
   /**
