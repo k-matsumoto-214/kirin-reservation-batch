@@ -11,11 +11,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Configuration
 public class StartDateTimeConfig {
 
-  @Value("${kirin.start-time.am}")
+  @Value("${kirin.start-time-am}")
   @DateTimeFormat(pattern = "HH:mm:ss")
   private LocalTime startTimeAm;
 
-  @Value("${kirin.start-time.pm}")
+  @Value("${kirin.start-time-pm}")
   @DateTimeFormat(pattern = "HH:mm:ss")
   private LocalTime startTimePm;
 
