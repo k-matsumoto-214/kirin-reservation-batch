@@ -16,7 +16,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import com.kirin.reservation.config.StartDateTimeConfig;
-import com.kirin.reservation.config.WebDriverConfig;
 import com.kirin.reservation.model.Name;
 import com.kirin.reservation.model.ReservationDateList;
 import com.kirin.reservation.repository.ReservationDateRepository;
@@ -40,7 +39,7 @@ public class ReservationService {
 
   private final ReservationDateRepository reservationDateRepository;
 
-  private final WebDriverConfig webDriverConfig;
+  private final WebDriver webDriver;
 
   private final StartDateTimeConfig startDateTimeConfig;
 
@@ -65,9 +64,7 @@ public class ReservationService {
    * @return 予約受付番号
    * @throws MalformedURLException
    */
-  public int reserve(String targetName) throws MalformedURLException {
-    WebDriver webDriver = webDriverConfig.getWebDriver();
-
+  public int reserve(String targetName) {
     try {
       log.info("{}の予約を開始", targetName);
       webDriver.get(kirinUrl);
@@ -83,6 +80,7 @@ public class ReservationService {
       // 予約時間になるまで待機
       int waitCount = 0;
       LocalDateTime startDateTime = startDateTimeConfig.getStartDateTime();
+      // Todo:インスタンス作り捨て目立つ ZoneIdは切り出し TIMECONFIGみたいなのを作ってまとめる
       while (LocalDateTime.now(ZoneId.of("Asia/Tokyo")).isBefore(startDateTime)) {
         // 100,000,000回ループするごとにログ表示
         if (waitCount % (1000 * 1000 * 100) == 0) {
@@ -106,6 +104,7 @@ public class ReservationService {
               By.cssSelector("#reserve_show_periods_1 > table > tbody > tr.row-available > td:nth-child(6) > a"))
           .click();
 
+      // todo: ここの分岐は別メソッドに切り分けたい
       if (Objects.equals(targetName, Name.NAO.getValue())) { // 尚大の予約のとき
 
         // 予約対象者が表示されるまで待機
@@ -160,8 +159,7 @@ public class ReservationService {
       log.error("{}の予約中にエラー発生 原因: {}", targetName, e.toString());
       throw new RuntimeException(e);
     } finally {
-      webDriver.quit();
+      webDriver.close();
     }
-
   }
 }
