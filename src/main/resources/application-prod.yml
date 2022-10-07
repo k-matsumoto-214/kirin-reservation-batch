@@ -17,7 +17,8 @@ kirin:
   user: ${KIRIN_USER}
   password: ${KIRIN_PASSWORD}
   url: ${KIRIN_URL}
-  start-time: ${KIRIN_START_TIME}
+  start-time_am: ${KIRIN_START_TIME_AM}
+  start-time_pm: ${KIRIN_START_TIME_PM}
 
 selenium:
   host: ${SELENIUM_HOST}

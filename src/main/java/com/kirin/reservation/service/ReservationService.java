@@ -79,14 +79,32 @@ public class ReservationService {
 
       // 予約時間になるまで待機
       int waitCount = 0;
-      LocalDateTime startDateTime = startDateTimeConfig.getStartDateTime();
-      // Todo:インスタンス作り捨て目立つ ZoneIdは切り出し TIMECONFIGみたいなのを作ってまとめる
-      while (LocalDateTime.now(ZoneId.of("Asia/Tokyo")).isBefore(startDateTime)) {
-        // 100,000,000回ループするごとにログ表示
-        if (waitCount % (1000 * 1000 * 100) == 0) {
-          log.info("待機中");
+      LocalDateTime startDateTimeAm = startDateTimeConfig.getStartDateTimeAm();
+
+      if (LocalDateTime.now(ZoneId.of("Asia/Tokyo")).isBefore(startDateTimeAm)) {
+
+        // Todo:インスタンス作り捨て目立つ ZoneIdは切り出し TIMECONFIGみたいなのを作ってまとめる
+        while (LocalDateTime.now(ZoneId.of("Asia/Tokyo")).isBefore(startDateTimeAm)) {
+          // 100,000,000回ループするごとにログ表示
+          if (waitCount % (1000 * 1000 * 100) == 0) {
+            log.info("待機中");
+          }
+          waitCount++;
         }
-        waitCount++;
+
+      } else {
+
+        LocalDateTime startDateTimePm = startDateTimeConfig.getStartDateTimePm();
+
+        // Todo:インスタンス作り捨て目立つ ZoneIdは切り出し TIMECONFIGみたいなのを作ってまとめる
+        while (LocalDateTime.now(ZoneId.of("Asia/Tokyo")).isBefore(startDateTimePm)) {
+          // 100,000,000回ループするごとにログ表示
+          if (waitCount % (1000 * 1000 * 100) == 0) {
+            log.info("待機中");
+          }
+          waitCount++;
+        }
+
       }
 
       log.info("予約開始");

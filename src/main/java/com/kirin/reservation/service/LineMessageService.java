@@ -19,7 +19,7 @@ public class LineMessageService {
   @Value("${line.bot.group-id}")
   private String lineGroupId;
 
-  private static final String SUCCESS_MESSAGE = "$sの予約が完了しました!(%s) 順番は %s です。";
+  private static final String SUCCESS_MESSAGE = "%sの予約が完了しました!(%s) 順番は %s です。";
 
   private final LineMessagingClient lineMessagingClient;
 

@@ -25,13 +25,18 @@
     "description": "URL TO KIRIN"
   },
   {
-    "name": "kirin.start-time",
+    "name": "cron",
+    "type": "java.lang.String",
+    "description": "cron for app"
+  },
+  {
+    "name": "kirin.start-time_am",
     "type": "java.lang.String",
     "description": "TIME TO START RESERVATION"
   },
   {
-    "name": "cron",
+    "name": "kirin.start-time_pm",
     "type": "java.lang.String",
-    "description": "cron for app"
+    "description": "TIME TO START RESERVATION"
   }
 ]}
