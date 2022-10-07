@@ -1,5 +1,6 @@
 package com.kirin.reservation.task;
 
+import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class ReservationTask {
   private final LineMessageService lineMessageService;
 
   @Scheduled(cron = "${cron}")
-  public void executeReservation() {
+  public void executeReservation() throws MalformedURLException {
     LocalDate now = LocalDate.now(); // 実行日付を取得
 
     // DBに登録されている実行日の予約情報を取得

@@ -8,7 +8,7 @@ import java.time.ZoneId;
 import java.util.Objects;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +16,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import com.kirin.reservation.config.StartDateTimeConfig;
+import com.kirin.reservation.config.WebDriverConfig;
 import com.kirin.reservation.model.Name;
 import com.kirin.reservation.model.ReservationDateList;
 import com.kirin.reservation.repository.ReservationDateRepository;
@@ -39,7 +40,7 @@ public class ReservationService {
 
   private final ReservationDateRepository reservationDateRepository;
 
-  private final RemoteWebDriver webDriver;
+  private final WebDriverConfig webDriverConfig;
 
   private final StartDateTimeConfig startDateTimeConfig;
 
@@ -64,13 +65,15 @@ public class ReservationService {
    * @return 予約受付番号
    * @throws MalformedURLException
    */
-  public int reserve(String targetName) {
+  public int reserve(String targetName) throws MalformedURLException {
+    WebDriver webDriver = webDriverConfig.getWebDriver();
+
     try {
       log.info("{}の予約を開始", targetName);
       webDriver.get(kirinUrl);
 
       WebDriverWait webDriverWait = new WebDriverWait(webDriver, Duration.ofSeconds(10), Duration.ofMillis(30));
-      webDriverWait.until(webDriver -> webDriver.getTitle().toLowerCase().startsWith("ログイン"));
+      webDriverWait.until(driver -> driver.getTitle().toLowerCase().startsWith("ログイン"));
 
       webDriver.findElement(By.cssSelector("#email")).sendKeys(kirinUser);
       webDriver.findElement(By.cssSelector("#password")).sendKeys(kirinPassword);
@@ -93,7 +96,7 @@ public class ReservationService {
       webDriver.navigate().refresh();
 
       // 予約ボタンが表示されるまで待機
-      webDriverWait.until(webDriver -> webDriver
+      webDriverWait.until(driver -> driver
           .findElement(
               By.cssSelector("#reserve_show_periods_1 > table > tbody > tr.row-available > td:nth-child(6) > a"))
           .isDisplayed());
@@ -106,7 +109,7 @@ public class ReservationService {
       if (Objects.equals(targetName, Name.NAO.getValue())) { // 尚大の予約のとき
 
         // 予約対象者が表示されるまで待機
-        webDriverWait.until(webDriver -> webDriver.findElement(By.cssSelector("#user_id_11830"))
+        webDriverWait.until(driver -> driver.findElement(By.cssSelector("#user_id_11830"))
             .isDisplayed());
 
         // 予約対象者にチェックされていない場合はクリックしてチェックする
@@ -143,7 +146,7 @@ public class ReservationService {
 
       // 予約結果が表示されるまで待機
       // Todo: ここの予約結果のXpathが異なってそう 場合によっては結果スルーしてもいいかも
-      webDriverWait.until(webDriver -> webDriver
+      webDriverWait.until(driver -> driver
           .findElement(By.cssSelector("#reserve > div > fieldset:nth-child(5) > div:nth-child(5) > div"))
           .isDisplayed());
 
