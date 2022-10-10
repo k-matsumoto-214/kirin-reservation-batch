@@ -17,21 +17,22 @@ public class ReservationResult {
 
   private final String name;
   private final LocalDate date;
-  private final int reservedOrder;
+  private final ReservationTime reservationTime;
+  private final boolean isSuccess;
 
   /**
    * ファクトリメソッド
    * 
-   * @param name          予約者名
-   * @param date          予約日付
-   * @param reservedOrder 受付順
+   * @param name 予約者名
+   * @param date 予約日付
    * @return 予約結果オブジェクト
    */
-  public static ReservationResult of(String name, LocalDate date, int reservedOrder) {
+  public static ReservationResult of(ReservationDate reservationDate, boolean isSuccess) {
     return ReservationResult.builder()
-        .name(name)
-        .date(date)
-        .reservedOrder(reservedOrder)
+        .name(reservationDate.getName())
+        .date(reservationDate.getDate())
+        .reservationTime(ReservationTime.from(reservationDate.getReservationTime()))
+        .isSuccess(isSuccess)
         .build();
   }
 

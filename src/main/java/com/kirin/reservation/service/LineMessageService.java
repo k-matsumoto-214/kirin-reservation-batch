@@ -19,14 +19,23 @@ public class LineMessageService {
   @Value("${line.bot.group-id}")
   private String lineGroupId;
 
-  private static final String SUCCESS_MESSAGE = "%sの予約が完了しました!(%s) 順番は %s です。";
+  private static final String SUCCESS_MESSAGE = "%sの予約が完了しました!(%s %s) ";
+  private static final String FAILURE_MESSAGE = "%sの予約に失敗しました...(%s %s) ";
 
   private final LineMessagingClient lineMessagingClient;
 
   public boolean sendReservationResult(ReservationResult result) {
 
+    String message;
+    if (result.isSuccess()) {
+      message = SUCCESS_MESSAGE;
+    } else {
+      message = FAILURE_MESSAGE;
+    }
+
     TextMessage textMessage = new TextMessage(
-        String.format(SUCCESS_MESSAGE, result.getName(), result.getFormattedDate(), result.getReservedOrder()));
+        String.format(message, result.getName(), result.getFormattedDate(),
+            result.getReservationTime().getDiscription()));
 
     PushMessage pushMessage = new PushMessage(lineGroupId, textMessage);
 

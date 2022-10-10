@@ -30,13 +30,23 @@
     "description": "cron for app"
   },
   {
-    "name": "kirin.start-time-am",
+    "name": "kirin.start-time.am",
     "type": "java.lang.String",
     "description": "TIME TO START RESERVATION"
   },
   {
-    "name": "kirin.start-time-pm",
+    "name": "kirin.start-time.pm",
     "type": "java.lang.String",
     "description": "TIME TO START RESERVATION"
+  },
+  {
+    "name": "kirin.target-name",
+    "type": "java.lang.String",
+    "description": "NAME OF RESERVATION TARGET"
+  },
+  {
+    "name": "kirin.target-id",
+    "type": "java.lang.String",
+    "description": "ID OF RESERVATION TARGET"
   }
 ]}

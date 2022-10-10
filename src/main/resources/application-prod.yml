@@ -10,15 +10,17 @@ server:
 line:
   bot:
     channel-token: ${LINE_BOT_CHANNEL_TOKEN}
-    channel-secret: ${LINE_BOT_CHANNEL_SECRET}
     group-id: ${LINE_BOT_GROUP_ID}
 
 kirin:
   user: ${KIRIN_USER}
   password: ${KIRIN_PASSWORD}
   url: ${KIRIN_URL}
-  start-time-am: ${KIRIN_START_TIME_AM}
-  start-time-pm: ${KIRIN_START_TIME_PM}
+  start-time:
+    am: ${KIRIN_START_TIME_AM}
+    pm: ${KIRIN_START_TIME_PM}
+  target-name: ${KIRIN_TARGET_NAME}
+  target-id: ${KIRIN_TARGET_ID}
 
 selenium:
   host: ${SELENIUM_HOST}

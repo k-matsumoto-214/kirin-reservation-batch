@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ReservationDateDto {
-  private int id;
   private String Name;
   private LocalDate date;
+  private String reservationTime;
 }

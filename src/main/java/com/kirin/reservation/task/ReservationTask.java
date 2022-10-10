@@ -1,15 +1,16 @@
 package com.kirin.reservation.task;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.kirin.reservation.config.StartDateTimeConfig;
 import com.kirin.reservation.model.ReservationDate;
-import com.kirin.reservation.model.ReservationDateList;
 import com.kirin.reservation.model.ReservationResult;
+import com.kirin.reservation.model.ReservationTime;
 import com.kirin.reservation.service.LineMessageService;
 import com.kirin.reservation.service.ReservationService;
 
@@ -21,43 +22,46 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ReservationTask {
 
+  @Value("${kirin.target-name}")
+  private String targetName;
+
   private final ReservationService reservationService;
+
+  private final StartDateTimeConfig startDateTimeConfig;
 
   private final LineMessageService lineMessageService;
 
   @Scheduled(cron = "${cron}")
-  public void executeReservation() {
+  public void executeReservation() throws MalformedURLException {
     // Todo:ZoneIdつけとく やっぱりTimeConfig欲しい
-    LocalDate now = LocalDate.now(); // 実行日付を取得
+    LocalDateTime now = LocalDateTime.now(); // 実行日付を取得
+
+    /**
+     * バッチ実行時刻によって午前予約実施か午後予約実施かを判断する
+     **/
+    ReservationTime reservationTime;
+    if (now.isBefore(startDateTimeConfig.getStartDateTimeAm())) {
+      reservationTime = ReservationTime.AM;
+    } else {
+      reservationTime = ReservationTime.PM;
+    }
 
     // DBに登録されている実行日の予約情報を取得
-    ReservationDateList reservationDateList = reservationService.findReserVationTarget(now);
+    ReservationDate reservationDate = reservationService.findReservationTarget(targetName, now.toLocalDate(),
+        reservationTime);
 
-    // 重複を省いた予約日付情報を取得
-    List<ReservationDate> reservationDates = reservationDateList.getDistinctReservationDates();
-
-    if (reservationDates.isEmpty()) {
+    if (reservationDate.isEmpty()) {
       log.info("予約の予約がされてないよ！");
       return;
     }
 
-    // 予約者分予約処理を行う
-    // 予約結果を保持するマップを定義
-    List<ReservationResult> reservationResults = new ArrayList<>();
+    // 予約実行
+    boolean isSuccess = reservationService.reserve(targetName);
 
-    for (ReservationDate reservationDate : reservationDates) {
-      String targetName = reservationDate.getName();
-
-      // 予約実行
-      // ここ失敗処理入れたい
-      int reservedOrder = reservationService.reserve(targetName);
-
-      // 予約結果を格納
-      reservationResults.add(ReservationResult.of(targetName, now, reservedOrder));
-    }
+    ReservationResult result = ReservationResult.of(reservationDate, isSuccess);
 
     // 各予約結果についてLINE通知を送信する
-    reservationResults.forEach(result -> lineMessageService.sendReservationResult(result));
+    lineMessageService.sendReservationResult(result);
   }
 
 }

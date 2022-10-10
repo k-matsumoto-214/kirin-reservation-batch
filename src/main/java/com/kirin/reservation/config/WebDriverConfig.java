@@ -6,7 +6,6 @@ import java.net.URL;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -27,8 +26,7 @@ public class WebDriverConfig {
    * @return Webドライバ
    * @throws MalformedURLException
    */
-  @Bean
-  public RemoteWebDriver webDriver() throws MalformedURLException {
+  public RemoteWebDriver getWebDriver() throws MalformedURLException {
     return new RemoteWebDriver(new URL(seleniumHost), chromeOptions);
   }
 

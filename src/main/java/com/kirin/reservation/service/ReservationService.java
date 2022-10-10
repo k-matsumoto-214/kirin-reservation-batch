@@ -4,8 +4,6 @@ import java.net.MalformedURLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Objects;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -16,8 +14,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import com.kirin.reservation.config.StartDateTimeConfig;
-import com.kirin.reservation.model.Name;
-import com.kirin.reservation.model.ReservationDateList;
+import com.kirin.reservation.config.WebDriverConfig;
+import com.kirin.reservation.model.ReservationDate;
+import com.kirin.reservation.model.ReservationTime;
 import com.kirin.reservation.repository.ReservationDateRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -37,34 +36,41 @@ public class ReservationService {
   @Value("${kirin.url}")
   private String kirinUrl;
 
+  @Value("${kirin.target-userid}")
+  private String targetUserId;
+
   private final ReservationDateRepository reservationDateRepository;
 
-  private final WebDriver webDriver;
+  private final WebDriverConfig webDriverConfig;
 
   private final StartDateTimeConfig startDateTimeConfig;
 
   /**
-   * 予約処理を実行しLINEに結果を通知する
+   * DBから予約情報を取得する
    * 
-   * @param targeDate 処理実行日
-   * @throws MalformedURLException
-   * @throws InterruptedException
+   * @param targetName      予約対象者名
+   * @param targeDate       予約対象日付
+   * @param reservationTime 予約対象時間帯
+   * @return 予約情報
    */
   @Retryable
-  public ReservationDateList findReserVationTarget(LocalDate targeDate) {
+  public ReservationDate findReservationTarget(String targetName, LocalDate targeDate,
+      ReservationTime reservationTime) {
 
     // DBから予約情報を取得
-    return reservationDateRepository.findByReservationDate(targeDate);
+    return reservationDateRepository.findByReservationDate(targetName, targeDate, reservationTime);
   }
 
   /**
-   * web予約をおこなって受付番号を返す
+   * web予約をおこなってその結果を返す
    * 
    * @param targetName 予約対象者名
-   * @return 予約受付番号
+   * @return 予約成功のときtrue
    * @throws MalformedURLException
    */
-  public int reserve(String targetName) {
+  public boolean reserve(String targetName) throws MalformedURLException {
+    WebDriver webDriver = webDriverConfig.getWebDriver();
+
     try {
       log.info("{}の予約を開始", targetName);
       webDriver.get(kirinUrl);
@@ -81,10 +87,8 @@ public class ReservationService {
       int waitCount = 0;
       LocalDateTime startDateTimeAm = startDateTimeConfig.getStartDateTimeAm();
 
-      if (LocalDateTime.now(ZoneId.of("Asia/Tokyo")).isBefore(startDateTimeAm)) {
-
-        // Todo:インスタンス作り捨て目立つ ZoneIdは切り出し TIMECONFIGみたいなのを作ってまとめる
-        while (LocalDateTime.now(ZoneId.of("Asia/Tokyo")).isBefore(startDateTimeAm)) {
+      if (startDateTimeConfig.getNow().isBefore(startDateTimeAm)) {
+        while (startDateTimeConfig.getNow().isBefore(startDateTimeAm)) {
           // 100,000,000回ループするごとにログ表示
           if (waitCount % (1000 * 1000 * 100) == 0) {
             log.info("待機中");
@@ -95,9 +99,7 @@ public class ReservationService {
       } else {
 
         LocalDateTime startDateTimePm = startDateTimeConfig.getStartDateTimePm();
-
-        // Todo:インスタンス作り捨て目立つ ZoneIdは切り出し TIMECONFIGみたいなのを作ってまとめる
-        while (LocalDateTime.now(ZoneId.of("Asia/Tokyo")).isBefore(startDateTimePm)) {
+        while (startDateTimeConfig.getNow().isBefore(startDateTimePm)) {
           // 100,000,000回ループするごとにログ表示
           if (waitCount % (1000 * 1000 * 100) == 0) {
             log.info("待機中");
@@ -122,36 +124,14 @@ public class ReservationService {
               By.cssSelector("#reserve_show_periods_1 > table > tbody > tr.row-available > td:nth-child(6) > a"))
           .click();
 
-      // todo: ここの分岐は別メソッドに切り分けたい
-      if (Objects.equals(targetName, Name.NAO.getValue())) { // 尚大の予約のとき
+      // 予約対象者が表示されるまで待機
+      String userIdSelector = "#user_id_" + targetUserId;
+      webDriverWait.until(driver -> driver.findElement(By.cssSelector(userIdSelector))
+          .isDisplayed());
 
-        // 予約対象者が表示されるまで待機
-        webDriverWait.until(driver -> driver.findElement(By.cssSelector("#user_id_11830"))
-            .isDisplayed());
-
-        // 予約対象者にチェックされていない場合はクリックしてチェックする
-        if (webDriver.findElement(By.cssSelector("#user_id_11830")).isSelected() == false) {
-          webDriver.findElement(By.cssSelector("#user_id_11830")).click();
-        }
-
-        // Todo: 匡平の診察IDが分かり次第更新 もしかしたら二人同時に予約できる？？
-        // USERID埋め込むだけでいけるならENUMにIDも持たせてここを共通化する
-      } else if (Objects.equals(targetName, Name.KYO.getValue())) { // 匡平の予約の時
-        // // 予約対象者が表示されるまで待機
-        // webDriverWait.until(webDriver ->
-        // webDriver.findElement(By.cssSelector("#user_id_11830"))
-        // .isDisplayed());
-
-        // // 予約対象者にチェックされていない場合はクリックしてチェックする
-        // if (driver.findElement(By.cssSelector("#user_id_11830")).isSelected() ==
-        // false) {
-        // driver.findElement(By.cssSelector("#user_id_11830")).click();
-        // }
-        log.info("{}の予約はまだできないんです。。。", targetName);
-        throw new RuntimeException("まだ予約できません。。。");
-      } else {
-        log.error("{}は不正なユーザーです!!", targetName);
-        throw new RuntimeException("不正なユーザーで予約実行");
+      // 予約対象者にチェックする
+      if (webDriver.findElement(By.cssSelector(userIdSelector)).isSelected() == false) {
+        webDriver.findElement(By.cssSelector(userIdSelector)).click();
       }
 
       // 予約実行
@@ -161,21 +141,14 @@ public class ReservationService {
       webDriverWait.until(ExpectedConditions.alertIsPresent());
       webDriver.switchTo().alert().accept();
 
-      // 予約結果が表示されるまで待機
-      // Todo: ここの予約結果のXpathが異なってそう 場合によっては結果スルーしてもいいかも
-      webDriverWait.until(driver -> driver
-          .findElement(By.cssSelector("#reserve > div > fieldset:nth-child(5) > div:nth-child(5) > div"))
-          .isDisplayed());
-
-      // 予約受付番号を取得
-      String reservedOrder = webDriver
-          .findElement(By.cssSelector("#reserve > div > fieldset:nth-child(5) > div:nth-child(5) > div")).getText();
-
-      return Integer.parseInt(reservedOrder);
+      return true;
 
     } catch (Exception e) {
+
       log.error("{}の予約中にエラー発生 原因: {}", targetName, e.toString());
-      throw new RuntimeException(e);
+
+      return false;
+
     } finally {
       webDriver.close();
     }

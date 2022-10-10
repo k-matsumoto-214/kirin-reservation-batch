@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class ReservationDate {
 
-  private final int id;
   private final String name;
   private final LocalDate date;
+  private final String reservationTime;
 
   /**
    * 予約日付モデルのファクトリ
@@ -26,25 +26,36 @@ public class ReservationDate {
    * @return 予約日付モデル
    */
   public static ReservationDate from(ReservationDateDto dto) {
+    if (Objects.isNull(dto)) {
+      return ReservationDate.empty();
+    }
+
     return ReservationDate.builder()
-        .id(dto.getId())
         .name(dto.getName())
         .date(dto.getDate())
+        .reservationTime(dto.getReservationTime())
         .build();
   }
 
-  @Override
   /**
-   * ReservationDateオブジェクトの比較
-   * name, dateプロパティを参照して等しいかどうか判断します
-   * name, dateプロパティが等価であるときtrue
+   * 空ドメイン生成
+   * 
+   * @return 空の予約情報日付ドメイン
    */
-  public boolean equals(Object obj) {
-    if (obj instanceof ReservationDate) {
-      ReservationDate reservationDate = (ReservationDate) obj;
-      return Objects.equals(this.getName(), reservationDate.getName())
-          && Objects.equals(this.getDate(), reservationDate.getDate());
-    }
-    return false;
+  public static ReservationDate empty() {
+    return ReservationDate.builder()
+        .name("")
+        .date(null)
+        .reservationTime(null)
+        .build();
+  }
+
+  /**
+   * 空ドメイン判定
+   * 
+   * @return ドメインが空の時true
+   */
+  public boolean isEmpty() {
+    return Objects.equals(this.name, "");
   }
 }

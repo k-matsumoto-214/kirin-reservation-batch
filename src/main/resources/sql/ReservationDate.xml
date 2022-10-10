@@ -9,10 +9,14 @@
       <id property="id" column="ID"/>
       <result property="name" column="NAME" />
       <result property="date" column="DATE" />
+      <result property="reservationTime" colum="RESERVATION_TIME"
     </resultMap>
 
     <select id="findByReservationDate" resultMap="reservationDateDto">
-        SELECT ID, NAME, DATE FROM RESERVATION_DATE WHERE DATE = #{reservationDate}
+        SELECT ID, NAME, DATE, RESERVATION_TIME FROM RESERVATION_DATE 
+        WHERE DATE = #{reservationDate}
+        AND RESERVATION_TIME = #{reservationTime.value}
+        AND NAME = #{targetName}
     </select>
 
 </mapper>
