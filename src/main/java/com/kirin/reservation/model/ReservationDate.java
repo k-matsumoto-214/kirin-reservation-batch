@@ -17,7 +17,7 @@ public class ReservationDate {
 
   private final String name;
   private final LocalDate date;
-  private final String reservationTime;
+  private final ReservationTime reservationTime;
 
   /**
    * 予約日付モデルのファクトリ
@@ -33,7 +33,7 @@ public class ReservationDate {
     return ReservationDate.builder()
         .name(dto.getName())
         .date(dto.getDate())
-        .reservationTime(dto.getReservationTime())
+        .reservationTime(ReservationTime.from(dto.getReservationTime()))
         .build();
   }
 

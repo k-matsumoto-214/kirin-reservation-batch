@@ -31,7 +31,7 @@ public class ReservationResult {
     return ReservationResult.builder()
         .name(reservationDate.getName())
         .date(reservationDate.getDate())
-        .reservationTime(ReservationTime.from(reservationDate.getReservationTime()))
+        .reservationTime(reservationDate.getReservationTime())
         .isSuccess(isSuccess)
         .build();
   }
