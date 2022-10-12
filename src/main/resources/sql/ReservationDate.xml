@@ -8,7 +8,7 @@
     <resultMap id="reservationDateDto" type="com.kirin.reservation.repository.entity.ReservationDateDto">
       <id property="name" column="NAME" />
       <result property="date" column="DATE" />
-      <result property="reservationTime" colum="RESERVATION_TIME" />
+      <result property="reservationTime" column="RESERVATION_TIME" />
     </resultMap>
 
     <select id="findByReservationDate" resultMap="reservationDateDto">
