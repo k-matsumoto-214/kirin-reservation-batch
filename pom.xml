@@ -79,6 +79,13 @@
       <artifactId>spring-retry</artifactId>
       <version>${spring-retry.version}</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+      <scope>runtime</scope>
+    </dependency>
     
     <dependency>
       <groupId>org.springframework.boot</groupId>
