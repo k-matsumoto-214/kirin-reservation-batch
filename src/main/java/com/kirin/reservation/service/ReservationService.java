@@ -36,7 +36,7 @@ public class ReservationService {
   @Value("${kirin.url}")
   private String kirinUrl;
 
-  @Value("${kirin.target-userid}")
+  @Value("${kirin.target-id}")
   private String targetUserId;
 
   private final ReservationDateRepository reservationDateRepository;
