@@ -10,6 +10,7 @@ server:
 line:
   bot:
     channel-token: ${LINE_BOT_CHANNEL_TOKEN}
+    channel-secret: ${LINE_BOT_CHANNEL_SECRET}
     group-id: ${LINE_BOT_GROUP_ID}
 
 kirin:
