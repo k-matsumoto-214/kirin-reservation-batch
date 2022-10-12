@@ -24,6 +24,7 @@ jobs:
           cd ~/repository/kirin-reservation-batch
           git pull origin master
           mvn -B package --file pom.xml
+          cd ~/repository/kirin-reservation-batch/target
           cp reservation-batch.jar reservation-batch-nao.jar 
           cp reservation-batch.jar reservation-batch-kyo.jar 
           systemctl --user restart kirin-reservation-batch-nao
