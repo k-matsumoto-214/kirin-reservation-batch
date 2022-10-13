@@ -48,5 +48,15 @@
     "name": "kirin.target-id",
     "type": "java.lang.String",
     "description": "ID OF RESERVATION TARGET"
+  },
+  {
+    "name": "kirin.detail-url",
+    "type": "java.lang.String",
+    "description": "URL TO KIRIN DETAIL"
+  },
+  {
+    "name": "kirin.interview-url",
+    "type": "java.lang.String",
+    "description": "URL TO KIRIN INTERVIEW"
   }
 ]}

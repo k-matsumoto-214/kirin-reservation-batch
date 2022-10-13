@@ -3,10 +3,11 @@ package com.kirin.reservation.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.kirin.reservation.factory.LineMessageFactory;
 import com.kirin.reservation.model.ReservationResult;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.PushMessage;
-import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.model.message.Message;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,25 +20,19 @@ public class LineMessageService {
   @Value("${line.bot.group-id}")
   private String lineGroupId;
 
-  private static final String SUCCESS_MESSAGE = "%sの予約が完了しました!(%s %s) ";
-  private static final String FAILURE_MESSAGE = "%sの予約に失敗しました...(%s %s) ";
-
   private final LineMessagingClient lineMessagingClient;
+  private final LineMessageFactory lineMessageFactory;
 
   public boolean sendReservationResult(ReservationResult result) {
 
-    String message;
+    Message message;
     if (result.isSuccess()) {
-      message = SUCCESS_MESSAGE;
+      message = lineMessageFactory.createSuccessMessage(result);
     } else {
-      message = FAILURE_MESSAGE;
+      message = lineMessageFactory.createFailureMessage(result);
     }
 
-    TextMessage textMessage = new TextMessage(
-        String.format(message, result.getName(), result.getFormattedDate(),
-            result.getReservationTime().getDiscription()));
-
-    PushMessage pushMessage = new PushMessage(lineGroupId, textMessage);
+    PushMessage pushMessage = new PushMessage(lineGroupId, message);
 
     try {
       lineMessagingClient.pushMessage(pushMessage).get();
@@ -47,5 +42,4 @@ public class LineMessageService {
       return false;
     }
   }
-
 }
