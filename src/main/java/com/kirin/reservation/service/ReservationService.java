@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
-import com.kirin.reservation.config.StartDateTimeConfig;
+import com.kirin.reservation.config.TimeConfig;
 import com.kirin.reservation.config.WebDriverConfig;
 import com.kirin.reservation.model.ReservationDate;
 import com.kirin.reservation.model.ReservationTime;
@@ -43,7 +43,7 @@ public class ReservationService {
 
   private final WebDriverConfig webDriverConfig;
 
-  private final StartDateTimeConfig startDateTimeConfig;
+  private final TimeConfig startDateTimeConfig;
 
   /**
    * DBから予約情報を取得する

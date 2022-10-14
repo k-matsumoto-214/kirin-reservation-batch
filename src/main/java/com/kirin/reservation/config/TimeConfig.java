@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Configuration
-public class StartDateTimeConfig {
+public class TimeConfig {
 
   @Value("${kirin.start-time.am}")
   @DateTimeFormat(pattern = "HH:mm:ss")

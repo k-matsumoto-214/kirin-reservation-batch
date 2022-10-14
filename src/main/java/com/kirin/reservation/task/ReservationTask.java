@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.kirin.reservation.config.StartDateTimeConfig;
+import com.kirin.reservation.config.TimeConfig;
 import com.kirin.reservation.model.ReservationDate;
 import com.kirin.reservation.model.ReservationResult;
 import com.kirin.reservation.model.ReservationTime;
@@ -27,20 +27,19 @@ public class ReservationTask {
 
   private final ReservationService reservationService;
 
-  private final StartDateTimeConfig startDateTimeConfig;
+  private final TimeConfig timeConfig;
 
   private final LineMessageService lineMessageService;
 
   @Scheduled(cron = "${cron}")
   public void executeReservation() throws MalformedURLException {
-    // Todo:ZoneIdつけとく やっぱりTimeConfig欲しい
-    LocalDateTime now = LocalDateTime.now(); // 実行日付を取得
+    LocalDateTime now = timeConfig.getNow(); // 実行日付を取得
 
     /**
      * バッチ実行時刻によって午前予約実施か午後予約実施かを判断する
      **/
     ReservationTime reservationTime;
-    if (now.isBefore(startDateTimeConfig.getStartDateTimeAm())) {
+    if (now.isBefore(timeConfig.getStartDateTimeAm())) {
       reservationTime = ReservationTime.AM;
     } else {
       reservationTime = ReservationTime.PM;
