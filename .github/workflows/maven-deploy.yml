@@ -8,6 +8,7 @@ jobs:
   test:
     uses: ./.github/workflows/maven-test.yml
   deploy:
+    needs: [test]
     runs-on: ubuntu-latest
     permissions:
       contents: read
