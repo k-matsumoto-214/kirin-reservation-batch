@@ -1,10 +1,14 @@
 package com.kirin.reservation.service;
 
+import com.kirin.reservation.config.TimeConfig;
+import com.kirin.reservation.config.WebDriverConfig;
+import com.kirin.reservation.model.ReservationDate;
+import com.kirin.reservation.model.ReservationTime;
+import com.kirin.reservation.repository.database.ReservationDateRepository;
 import java.net.MalformedURLException;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -12,15 +16,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-
-import com.kirin.reservation.config.TimeConfig;
-import com.kirin.reservation.config.WebDriverConfig;
-import com.kirin.reservation.model.ReservationDate;
-import com.kirin.reservation.model.ReservationTime;
-import com.kirin.reservation.repository.ReservationDateRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -43,11 +38,11 @@ public class ReservationService {
 
   private final WebDriverConfig webDriverConfig;
 
-  private final TimeConfig startDateTimeConfig;
+  private final TimeConfig timeConfig;
 
   /**
    * DBから予約情報を取得する
-   * 
+   *
    * @param targetName      予約対象者名
    * @param targeDate       予約対象日付
    * @param reservationTime 予約対象時間帯
@@ -63,19 +58,20 @@ public class ReservationService {
 
   /**
    * web予約をおこなってその結果を返す
-   * 
-   * @param targetName 予約対象者名
+   *
+   * @param targetName      予約対象者名
+   * @param reservationTime 予約時間帯
    * @return 予約成功のときtrue
-   * @throws MalformedURLException
    */
-  public boolean reserve(String targetName) throws MalformedURLException {
+  public boolean reserve(String targetName, ReservationTime reservationTime)
+      throws MalformedURLException {
     WebDriver webDriver = webDriverConfig.getWebDriver();
 
     try {
       log.info("{}の予約を開始", targetName);
       webDriver.get(kirinUrl);
 
-      WebDriverWait webDriverWait = new WebDriverWait(webDriver, Duration.ofSeconds(10), Duration.ofMillis(30));
+      WebDriverWait webDriverWait = webDriverConfig.getWebDriverWait(webDriver);
       webDriverWait.until(driver -> driver.getTitle().toLowerCase().startsWith("ログイン"));
 
       webDriver.findElement(By.cssSelector("#email")).sendKeys(kirinUser);
@@ -85,43 +81,24 @@ public class ReservationService {
 
       // 予約時間になるまで待機
       int waitCount = 0;
-      LocalDateTime startDateTimeAm = startDateTimeConfig.getStartDateTimeAm();
 
-      if (startDateTimeConfig.getNow().isBefore(startDateTimeAm)) {
-        while (startDateTimeConfig.getNow().isBefore(startDateTimeAm)) {
-          // 100,000,000回ループするごとにログ表示
-          if (waitCount % (1000 * 1000 * 100) == 0) {
-            log.info("待機中");
-          }
-          waitCount++;
-        }
-
-      } else {
-
-        LocalDateTime startDateTimePm = startDateTimeConfig.getStartDateTimePm();
-        while (startDateTimeConfig.getNow().isBefore(startDateTimePm)) {
-          // 100,000,000回ループするごとにログ表示
-          if (waitCount % (1000 * 1000 * 100) == 0) {
-            log.info("待機中");
-          }
-          waitCount++;
-        }
-
-      }
+      // 予約開始時間まで待機
+      timeConfig.until(reservationTime);
 
       log.info("予約開始");
-
       webDriver.navigate().refresh();
 
       // 予約ボタンが表示されるまで待機
       webDriverWait.until(driver -> driver
           .findElement(
-              By.cssSelector("#reserve_show_periods_1 > table > tbody > tr.row-available > td:nth-child(6) > a"))
+              By.cssSelector(
+                  "#reserve_show_periods_1 > table > tbody > tr.row-available > td:nth-child(6) > a"))
           .isDisplayed());
 
       webDriver
           .findElement(
-              By.cssSelector("#reserve_show_periods_1 > table > tbody > tr.row-available > td:nth-child(6) > a"))
+              By.cssSelector(
+                  "#reserve_show_periods_1 > table > tbody > tr.row-available > td:nth-child(6) > a"))
           .click();
 
       // 予約対象者が表示されるまで待機
@@ -130,7 +107,7 @@ public class ReservationService {
           .isDisplayed());
 
       // 予約対象者にチェックする
-      if (webDriver.findElement(By.cssSelector(userIdSelector)).isSelected() == false) {
+      if (!webDriver.findElement(By.cssSelector(userIdSelector)).isSelected()) {
         webDriver.findElement(By.cssSelector(userIdSelector)).click();
       }
 

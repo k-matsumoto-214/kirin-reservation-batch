@@ -1,9 +1,7 @@
 package com.kirin.reservation.model;
 
-import java.util.Arrays;
-
 import com.google.common.base.Objects;
-
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +16,7 @@ public enum ReservationTime {
 
   /**
    * ファクトリメソッド
-   * 
+   *
    * @param value 予約開始種別の値
    * @return 予約種別ドメイン
    */
@@ -26,6 +24,6 @@ public enum ReservationTime {
     return Arrays.stream(ReservationTime.values())
         .filter(reservationTime -> Objects.equal(reservationTime.getValue(), value))
         .findFirst()
-        .orElse(null);
+        .orElseThrow(IllegalArgumentException::new);
   }
 }

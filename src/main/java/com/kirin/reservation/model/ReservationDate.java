@@ -3,7 +3,7 @@ package com.kirin.reservation.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import com.kirin.reservation.repository.entity.ReservationDateDto;
+import com.kirin.reservation.repository.database.entity.ReservationDateDto;
 
 import lombok.AccessLevel;
 import lombok.Builder;

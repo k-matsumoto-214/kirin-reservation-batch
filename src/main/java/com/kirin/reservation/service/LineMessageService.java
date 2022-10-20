@@ -1,16 +1,14 @@
 package com.kirin.reservation.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.kirin.reservation.factory.LineMessageFactory;
 import com.kirin.reservation.model.ReservationResult;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.message.Message;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +21,7 @@ public class LineMessageService {
   private final LineMessagingClient lineMessagingClient;
   private final LineMessageFactory lineMessageFactory;
 
-  public boolean sendReservationResult(ReservationResult result) {
+  public void sendReservationResult(ReservationResult result) {
 
     Message message;
     if (result.isSuccess()) {
@@ -36,10 +34,8 @@ public class LineMessageService {
 
     try {
       lineMessagingClient.pushMessage(pushMessage).get();
-      return true;
     } catch (Exception e) {
       log.error("LINE通知に失敗しちゃった。。。 原因: {}", e.toString());
-      return false;
     }
   }
 }
