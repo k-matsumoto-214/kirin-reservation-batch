@@ -2,7 +2,6 @@ package com.kirin.reservation.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,9 +21,9 @@ public class ReservationResult {
 
   /**
    * ファクトリメソッド
-   * 
-   * @param name 予約者名
-   * @param date 予約日付
+   *
+   * @param reservationDate 予約情報ドメイン
+   * @param isSuccess       予約結果
    * @return 予約結果オブジェクト
    */
   public static ReservationResult of(ReservationDate reservationDate, boolean isSuccess) {
@@ -38,7 +37,7 @@ public class ReservationResult {
 
   /**
    * yyyy年MM月dd日フォーマットの予約日付文字列を返す
-   * 
+   *
    * @return フォーマットされた予約日付文字列
    */
   public String getFormattedDate() {

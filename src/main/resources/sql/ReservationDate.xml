@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.kirin.reservation.repository.mapper.ReservationDateMapper">
+<mapper namespace="com.kirin.reservation.repository.database.mapper.ReservationDateMapper">
 
-    <resultMap id="reservationDateDto" type="com.kirin.reservation.repository.entity.ReservationDateDto">
+    <resultMap id="reservationDateDto" type="com.kirin.reservation.repository.database.entity.ReservationDateDto">
       <id property="name" column="NAME" />
       <result property="date" column="DATE" />
       <result property="reservationTime" column="RESERVATION_TIME" />

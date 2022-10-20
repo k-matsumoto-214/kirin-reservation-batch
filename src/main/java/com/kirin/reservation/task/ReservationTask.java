@@ -1,21 +1,18 @@
 package com.kirin.reservation.task;
 
-import java.net.MalformedURLException;
-import java.time.LocalDateTime;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.kirin.reservation.config.TimeConfig;
 import com.kirin.reservation.model.ReservationDate;
 import com.kirin.reservation.model.ReservationResult;
 import com.kirin.reservation.model.ReservationTime;
 import com.kirin.reservation.service.LineMessageService;
 import com.kirin.reservation.service.ReservationService;
-
+import java.net.MalformedURLException;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -38,15 +35,11 @@ public class ReservationTask {
     /**
      * バッチ実行時刻によって午前予約実施か午後予約実施かを判断する
      **/
-    ReservationTime reservationTime;
-    if (now.isBefore(timeConfig.getStartDateTimeAm())) {
-      reservationTime = ReservationTime.AM;
-    } else {
-      reservationTime = ReservationTime.PM;
-    }
+    ReservationTime reservationTime = timeConfig.getReservationTime(now);
 
     // DBに登録されている実行日の予約情報を取得
-    ReservationDate reservationDate = reservationService.findReservationTarget(targetName, now.toLocalDate(),
+    ReservationDate reservationDate = reservationService.findReservationTarget(targetName,
+        now.toLocalDate(),
         reservationTime);
 
     if (reservationDate.isEmpty()) {
@@ -55,7 +48,7 @@ public class ReservationTask {
     }
 
     // 予約実行
-    boolean isSuccess = reservationService.reserve(targetName);
+    boolean isSuccess = reservationService.reserve(targetName, reservationTime);
 
     ReservationResult result = ReservationResult.of(reservationDate, isSuccess);
 

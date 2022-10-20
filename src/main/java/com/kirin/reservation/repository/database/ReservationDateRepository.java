@@ -1,4 +1,4 @@
-package com.kirin.reservation.repository;
+package com.kirin.reservation.repository.database;
 
 import java.time.LocalDate;
 

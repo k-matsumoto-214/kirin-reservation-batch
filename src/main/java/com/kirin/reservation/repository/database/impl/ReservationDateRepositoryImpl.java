@@ -1,4 +1,4 @@
-package com.kirin.reservation.repository.impl;
+package com.kirin.reservation.repository.database.impl;
 
 import java.time.LocalDate;
 
@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import com.kirin.reservation.model.ReservationDate;
 import com.kirin.reservation.model.ReservationTime;
-import com.kirin.reservation.repository.ReservationDateRepository;
-import com.kirin.reservation.repository.mapper.ReservationDateMapper;
+import com.kirin.reservation.repository.database.ReservationDateRepository;
+import com.kirin.reservation.repository.database.mapper.ReservationDateMapper;
 
 import lombok.RequiredArgsConstructor;
 
