@@ -6,7 +6,6 @@ import com.kirin.reservation.model.ReservationResult;
 import com.kirin.reservation.model.ReservationTime;
 import com.kirin.reservation.service.LineMessageService;
 import com.kirin.reservation.service.ReservationService;
-import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ public class ReservationTask {
   private final LineMessageService lineMessageService;
 
   @Scheduled(cron = "${cron}")
-  public void executeReservation() throws MalformedURLException {
+  public void executeReservation() {
     LocalDateTime now = timeConfig.getNow(); // 実行日付を取得
 
     /**
