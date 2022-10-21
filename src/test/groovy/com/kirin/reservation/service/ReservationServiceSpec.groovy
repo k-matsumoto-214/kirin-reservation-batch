@@ -1,7 +1,6 @@
 package com.kirin.reservation.service
 
 import com.kirin.reservation.config.TimeConfig
-import com.kirin.reservation.config.WebDriverConfig
 import com.kirin.reservation.model.ReservationDate
 import com.kirin.reservation.model.ReservationTime
 import com.kirin.reservation.repository.database.ReservationDateRepository

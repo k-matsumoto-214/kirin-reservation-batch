@@ -64,12 +64,12 @@ public class ReservationService {
    */
   public boolean reserve(String targetName, ReservationTime reservationTime) {
     WebDriver webDriver = webDriverConfig.getWebDriver();
+    WebDriverWait webDriverWait = webDriverConfig.getWebDriverWait(webDriver);
 
     try {
       log.info("{}の予約を開始", targetName);
       webDriver.get(kirinUrl);
 
-      WebDriverWait webDriverWait = webDriverConfig.getWebDriverWait(webDriver);
       webDriverWait.until(driver -> driver.getTitle().toLowerCase().startsWith("ログイン"));
 
       webDriver.findElement(By.cssSelector("#email")).sendKeys(kirinUser);

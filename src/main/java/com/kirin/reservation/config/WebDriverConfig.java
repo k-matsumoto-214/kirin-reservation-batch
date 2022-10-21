@@ -48,14 +48,4 @@ public class WebDriverConfig {
     return new WebDriverWait(webDriver, DURATION_TIMEOUT_SECONDS, DURATION_SLEEP_MILLIS);
   }
 
-  /**
-   * chromeを操作するWebdriverWaitを取得する
-   *
-   * @param webDriver 利用するWebDriver
-   * @return WebDriverWaitインスタンス
-   */
-  public WebDriverWait getWebDriverWait(WebDriver webDriver) {
-    return new WebDriverWait(webDriver, DURATION_TIMEOUT_SECONDS, DURATION_SLEEP_MILLIS);
-  }
-
 }
