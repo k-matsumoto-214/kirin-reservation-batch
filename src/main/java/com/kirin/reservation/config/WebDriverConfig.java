@@ -30,8 +30,12 @@ public class WebDriverConfig {
    *
    * @return WebDriverインスタンス
    */
-  public RemoteWebDriver getWebDriver() throws MalformedURLException {
-    return new RemoteWebDriver(new URL(seleniumHost), chromeOptions);
+  public RemoteWebDriver getWebDriver() {
+    try {
+      return new RemoteWebDriver(new URL(seleniumHost), chromeOptions);
+    } catch (MalformedURLException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**

@@ -5,7 +5,6 @@ import com.kirin.reservation.config.WebDriverConfig;
 import com.kirin.reservation.model.ReservationDate;
 import com.kirin.reservation.model.ReservationTime;
 import com.kirin.reservation.repository.database.ReservationDateRepository;
-import java.net.MalformedURLException;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,15 +62,14 @@ public class ReservationService {
    * @param reservationTime 予約時間帯
    * @return 予約成功のときtrue
    */
-  public boolean reserve(String targetName, ReservationTime reservationTime)
-      throws MalformedURLException {
+  public boolean reserve(String targetName, ReservationTime reservationTime) {
     WebDriver webDriver = webDriverConfig.getWebDriver();
+    WebDriverWait webDriverWait = webDriverConfig.getWebDriverWait(webDriver);
 
     try {
       log.info("{}の予約を開始", targetName);
       webDriver.get(kirinUrl);
 
-      WebDriverWait webDriverWait = webDriverConfig.getWebDriverWait(webDriver);
       webDriverWait.until(driver -> driver.getTitle().toLowerCase().startsWith("ログイン"));
 
       webDriver.findElement(By.cssSelector("#email")).sendKeys(kirinUser);
