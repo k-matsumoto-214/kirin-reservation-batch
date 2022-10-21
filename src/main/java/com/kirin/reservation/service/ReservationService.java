@@ -64,10 +64,10 @@ public class ReservationService {
    */
   public boolean reserve(String targetName, ReservationTime reservationTime) {
     WebDriver webDriver = webDriverConfig.getWebDriver();
-    WebDriverWait webDriverWait = webDriverConfig.getWebDriverWait(webDriver);
 
     try {
       log.info("{}の予約を開始", targetName);
+      WebDriverWait webDriverWait = webDriverConfig.getWebDriverWait(webDriver);
       webDriver.get(kirinUrl);
 
       webDriverWait.until(driver -> driver.getTitle().toLowerCase().startsWith("ログイン"));
@@ -125,7 +125,7 @@ public class ReservationService {
       return false;
 
     } finally {
-      webDriver.close();
+      webDriver.quit();
     }
   }
 }
