@@ -72,7 +72,9 @@ class ReservationServiceSpec extends Specification {
         setup:
         1 * webDriverConfig.getWebDriver() >> Mock(RemoteWebDriver) {
             navigate() >> Mock(WebDriver.Navigation)
-            findElement(_ as By) >> Mock(WebElement)
+            findElement(_ as By) >> Mock(WebElement) {
+                isSelected() >> false
+            }
             switchTo() >> Mock(WebDriver.TargetLocator) {
                 alert() >> Mock(Alert)
             }
@@ -87,6 +89,10 @@ class ReservationServiceSpec extends Specification {
 
         1 * kirinWebConfig.emailSelector() >> Mock(By)
         1 * kirinWebConfig.passwordSelector() >> Mock(By)
+        1 * kirinWebConfig.loginSelector() >> Mock(By)
+        1 * kirinWebConfig.reserveSelector() >> Mock(By)
+        2 * kirinWebConfig.userIdSelector() >> Mock(By)
+        1 * kirinWebConfig.executeSelector() >> Mock(By)
 
 
         when:
@@ -100,7 +106,9 @@ class ReservationServiceSpec extends Specification {
         setup:
         1 * webDriverConfig.getWebDriver() >> Mock(RemoteWebDriver) {
             navigate() >> Mock(WebDriver.Navigation)
-            findElement(_ as By) >> Mock(WebElement)
+            findElement(_ as By) >> Mock(WebElement) {
+                isSelected() >> true
+            }
             switchTo() >> Mock(WebDriver.TargetLocator) {
                 alert() >> {
                     throw new RuntimeException()
@@ -114,6 +122,13 @@ class ReservationServiceSpec extends Specification {
         }
 
         1 * timeConfig.until(_)
+
+        1 * kirinWebConfig.emailSelector() >> Mock(By)
+        1 * kirinWebConfig.passwordSelector() >> Mock(By)
+        1 * kirinWebConfig.loginSelector() >> Mock(By)
+        1 * kirinWebConfig.reserveSelector() >> Mock(By)
+        1 * kirinWebConfig.userIdSelector() >> Mock(By)
+        1 * kirinWebConfig.executeSelector() >> Mock(By)
 
         when:
         def actual = reservationService.reserve("name", GroovyMock(ReservationTime))

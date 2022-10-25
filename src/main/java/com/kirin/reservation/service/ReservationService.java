@@ -93,7 +93,7 @@ public class ReservationService {
       // 予約対象者が表示されるまで待機
       webDriverWait.until(driver -> driver
           .findElement(webConfig.userIdSelector())
-          .isDisplayed());
+          .isEnabled());
 
       // 予約対象者にチェックする
       if (!(webDriver.findElement(webConfig.userIdSelector()).isSelected())) {
