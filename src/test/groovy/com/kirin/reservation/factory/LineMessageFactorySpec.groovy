@@ -1,5 +1,6 @@
 package com.kirin.reservation.factory
 
+import com.kirin.reservation.model.ReservationDate
 import com.kirin.reservation.model.ReservationResult
 import com.kirin.reservation.model.ReservationTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,17 +16,17 @@ class LineMessageFactorySpec extends Specification {
     def "createFailureMessage_正常"() {
         setup:
         def name = "name"
-        def dateString = "2022年12月10日"
+        def date = "2022年12月10日"
         def reservationTime = ReservationTime.AM
 
-        def result = Mock(ReservationResult) {
+        def reservationDate = Mock(ReservationDate) {
             getName() >> name
-            getFormattedDate() >> dateString
+            getFormattedDate() >> date
             getReservationTime() >> reservationTime
         }
 
         when:
-        lineMessageFactory.createFailureMessage(result)
+        lineMessageFactory.createFailureMessage(reservationDate)
 
         then:
         noExceptionThrown()

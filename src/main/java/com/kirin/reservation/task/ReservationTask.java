@@ -46,13 +46,20 @@ public class ReservationTask {
       return;
     }
 
-    // 予約実行
-    boolean isSuccess = reservationService.reserve(targetName, reservationTime);
+    try {
+      // 予約実行
+      int reservationOrder = reservationService.reserve(targetName, reservationTime);
 
-    ReservationResult result = ReservationResult.of(reservationDate, isSuccess);
+      ReservationResult result = ReservationResult.of(reservationDate, reservationOrder);
 
-    // 各予約結果についてLINE通知を送信する
-    lineMessageService.sendReservationResult(result);
+      // 予約結果についてLINE通知を送信する
+      lineMessageService.sendSuccessMessage(result);
+
+    } catch (Exception e) {
+      log.error("予約実行に失敗しました。原因: {}", e.toString());
+      // 予約失敗についてLINE通知を送信する
+      lineMessageService.sendFailureMessage(reservationDate);
+    }
   }
 
 }

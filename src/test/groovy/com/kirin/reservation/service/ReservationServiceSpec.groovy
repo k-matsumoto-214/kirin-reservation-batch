@@ -11,7 +11,6 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.remote.RemoteWebDriver
-import org.openqa.selenium.support.ui.WebDriverWait
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -70,19 +69,17 @@ class ReservationServiceSpec extends Specification {
 
     def "reserve_正常処理"() {
         setup:
+        def reservationOrderString = "3"
+
         1 * webDriverConfig.getWebDriver() >> Mock(RemoteWebDriver) {
             navigate() >> Mock(WebDriver.Navigation)
             findElement(_ as By) >> Mock(WebElement) {
                 isSelected() >> false
+                getText() >> reservationOrderString
             }
             switchTo() >> Mock(WebDriver.TargetLocator) {
                 alert() >> Mock(Alert)
             }
-        }
-
-        1 * webDriverConfig.getWebDriverWait(_) >> Mock(WebDriverWait) {
-            until({}) >> true
-
         }
 
         1 * timeConfig.until(_)
@@ -90,16 +87,16 @@ class ReservationServiceSpec extends Specification {
         1 * kirinWebConfig.emailSelector() >> Mock(By)
         1 * kirinWebConfig.passwordSelector() >> Mock(By)
         1 * kirinWebConfig.loginSelector() >> Mock(By)
-        1 * kirinWebConfig.reserveSelector() >> Mock(By)
         2 * kirinWebConfig.userIdSelector() >> Mock(By)
         1 * kirinWebConfig.executeSelector() >> Mock(By)
+        1 * kirinWebConfig.reservationOrderSelector() >> Mock(By)
 
 
         when:
         def actual = reservationService.reserve("name", GroovyMock(ReservationTime))
 
         then:
-        actual == true
+        actual == Integer.parseInt(reservationOrderString)
     }
 
     def "reserve_例外発生"() {
@@ -108,6 +105,7 @@ class ReservationServiceSpec extends Specification {
             navigate() >> Mock(WebDriver.Navigation)
             findElement(_ as By) >> Mock(WebElement) {
                 isSelected() >> true
+                getText() >> "0"
             }
             switchTo() >> Mock(WebDriver.TargetLocator) {
                 alert() >> {
@@ -116,24 +114,17 @@ class ReservationServiceSpec extends Specification {
             }
         }
 
-        1 * webDriverConfig.getWebDriverWait(_) >> Mock(WebDriverWait) {
-            until({}) >> true
-
-        }
-
-        1 * timeConfig.until(_)
-
         1 * kirinWebConfig.emailSelector() >> Mock(By)
         1 * kirinWebConfig.passwordSelector() >> Mock(By)
         1 * kirinWebConfig.loginSelector() >> Mock(By)
-        1 * kirinWebConfig.reserveSelector() >> Mock(By)
         1 * kirinWebConfig.userIdSelector() >> Mock(By)
         1 * kirinWebConfig.executeSelector() >> Mock(By)
+        0 * kirinWebConfig.reservationOrderSelector()
 
         when:
-        def actual = reservationService.reserve("name", GroovyMock(ReservationTime))
+        reservationService.reserve("name", GroovyMock(ReservationTime))
 
         then:
-        actual == false
+        thrown(RuntimeException)
     }
 }

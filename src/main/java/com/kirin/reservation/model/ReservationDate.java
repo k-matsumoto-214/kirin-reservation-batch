@@ -1,10 +1,9 @@
 package com.kirin.reservation.model;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 import com.kirin.reservation.repository.database.entity.ReservationDateDto;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,13 +14,15 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class ReservationDate {
 
+  private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
   private final String name;
   private final LocalDate date;
+  
   private final ReservationTime reservationTime;
 
   /**
    * 予約日付モデルのファクトリ
-   * 
+   *
    * @param dto DBから取得した予約日付DTO
    * @return 予約日付モデル
    */
@@ -39,7 +40,7 @@ public class ReservationDate {
 
   /**
    * 空ドメイン生成
-   * 
+   *
    * @return 空の予約情報日付ドメイン
    */
   public static ReservationDate empty() {
@@ -52,10 +53,19 @@ public class ReservationDate {
 
   /**
    * 空ドメイン判定
-   * 
+   *
    * @return ドメインが空の時true
    */
   public boolean isEmpty() {
     return Objects.equals(this.name, "");
+  }
+
+  /**
+   * yyyy年MM月dd日フォーマットの予約日付文字列を返す
+   *
+   * @return フォーマットされた予約日付文字列
+   */
+  public String getFormattedDate() {
+    return this.date.format(DTF);
   }
 }

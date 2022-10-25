@@ -17,6 +17,9 @@ kirin:
   user: ${KIRIN_USER}
   password: ${KIRIN_PASSWORD}
   url: ${KIRIN_URL}
+  reservation-url:
+    am: ${KIRIN_RESERVATION_URL_AM}
+    pm: ${KIRIN_RESERVATION_URL_PM}
   detail-url: ${KIRIN_RESERVATION_DETAIL_URL}
   interview-url: ${KIRIN_INTERVIEW_URL}
   start-time:

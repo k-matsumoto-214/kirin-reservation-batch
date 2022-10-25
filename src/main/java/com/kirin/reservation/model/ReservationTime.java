@@ -11,7 +11,7 @@ public enum ReservationTime {
   AM("午前", "0"), // 午前予約
   PM("午後", "1"); // 午後予約
 
-  private final String discription;
+  private final String description;
   private final String value;
 
   /**

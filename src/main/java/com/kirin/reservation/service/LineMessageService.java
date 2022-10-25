@@ -1,6 +1,7 @@
 package com.kirin.reservation.service;
 
 import com.kirin.reservation.factory.LineMessageFactory;
+import com.kirin.reservation.model.ReservationDate;
 import com.kirin.reservation.model.ReservationResult;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.PushMessage;
@@ -21,14 +22,22 @@ public class LineMessageService {
   private final LineMessagingClient lineMessagingClient;
   private final LineMessageFactory lineMessageFactory;
 
-  public void sendReservationResult(ReservationResult result) {
+  public void sendSuccessMessage(ReservationResult result) {
 
-    Message message;
-    if (result.isSuccess()) {
-      message = lineMessageFactory.createSuccessMessage(result);
-    } else {
-      message = lineMessageFactory.createFailureMessage(result);
+    Message message = lineMessageFactory.createSuccessMessage(result);
+
+    PushMessage pushMessage = new PushMessage(lineGroupId, message);
+
+    try {
+      lineMessagingClient.pushMessage(pushMessage).get();
+    } catch (Exception e) {
+      log.error("LINE通知に失敗しちゃった。。。 原因: {}", e.toString());
     }
+  }
+
+  public void sendFailureMessage(ReservationDate reservationDate) {
+
+    Message message = lineMessageFactory.createFailureMessage(reservationDate);
 
     PushMessage pushMessage = new PushMessage(lineGroupId, message);
 

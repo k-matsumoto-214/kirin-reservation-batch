@@ -30,8 +30,26 @@ class ReservationTaskSpec extends Specification {
         1 * timeConfig.getNow() >> LocalDateTime.now()
         1 * timeConfig.getReservationTime(_) >> GroovyMock(ReservationTime)
         1 * reservationService.findReservationTarget(*_) >> Mock(ReservationDate)
-        1 * reservationService.reserve(*_) >> true
-        1 * lineMessageService.sendReservationResult(_)
+        1 * reservationService.reserve(*_) >> 1
+        1 * lineMessageService.sendSuccessMessage(_)
+
+        when:
+        reservationTask.executeReservation()
+
+        then:
+        noExceptionThrown()
+
+    }
+
+    def "executeReservation_異常"() {
+        setup:
+        1 * timeConfig.getNow() >> LocalDateTime.now()
+        1 * timeConfig.getReservationTime(_) >> GroovyMock(ReservationTime)
+        1 * reservationService.findReservationTarget(*_) >> Mock(ReservationDate)
+        1 * reservationService.reserve(*_) >> {
+            throw new RuntimeException()
+        }
+        1 * lineMessageService.sendFailureMessage(_)
 
         when:
         reservationTask.executeReservation()
@@ -49,7 +67,7 @@ class ReservationTaskSpec extends Specification {
             isEmpty() >> true
         }
         0 * reservationService.reserve(*_) >> true
-        0 * lineMessageService.sendReservationResult(_)
+        0 * lineMessageService.sendSuccessMessage(_)
 
         when:
         reservationTask.executeReservation()

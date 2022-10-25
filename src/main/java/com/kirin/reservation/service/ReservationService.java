@@ -10,8 +10,6 @@ import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -32,36 +30,32 @@ public class ReservationService {
    * DBから予約情報を取得する
    *
    * @param targetName      予約対象者名
-   * @param targeDate       予約対象日付
+   * @param targetDate      予約対象日付
    * @param reservationTime 予約対象時間帯
    * @return 予約情報
    */
   @Retryable
-  public ReservationDate findReservationTarget(String targetName, LocalDate targeDate,
+  public ReservationDate findReservationTarget(String targetName, LocalDate targetDate,
       ReservationTime reservationTime) {
 
     // DBから予約情報を取得
-    return reservationDateRepository.findByReservationDate(targetName, targeDate, reservationTime);
+    return reservationDateRepository.findByReservationDate(targetName, targetDate, reservationTime);
   }
 
   /**
-   * web予約をおこなってその結果を返す
+   * web予約をおこなってその結果(受付番号)を返す
    *
    * @param targetName      予約対象者名
    * @param reservationTime 予約時間帯
-   * @return 予約成功のときtrue
+   * @return 予約成功のとき受付番号
    */
-  public boolean reserve(String targetName, ReservationTime reservationTime) {
+  public int reserve(String targetName, ReservationTime reservationTime) {
     WebDriver webDriver = webDriverConfig.getWebDriver();
 
     try {
       log.info("{}の予約を開始", targetName);
 
-      WebDriverWait webDriverWait = webDriverConfig.getWebDriverWait(webDriver);
       webDriver.get(webConfig.url());
-
-      // ログイン画面表示待機
-      webDriverWait.until(driver -> driver.getTitle().startsWith(webConfig.loginTitle()));
 
       // email入力
       webDriver.findElement(webConfig.emailSelector()).sendKeys(webConfig.user());
@@ -79,43 +73,36 @@ public class ReservationService {
 
       log.info("予約開始");
 
-      // 予約開始時間になったら画面更新
-      webDriver.navigate().refresh();
+      // 予約開始時間になったら予約画面を開く
+      webDriver.get(webConfig.reservationUrl(reservationTime));
 
-      // 予約ボタンが表示されるまで待機
-      webDriverWait.until(driver ->
-          driver.findElement(webConfig.reserveSelector())
-              .isDisplayed());
+      // 予約対象者のチェックを確認する
+      boolean isChecked = webDriver.findElement(webConfig.userIdSelector()).isSelected();
 
-      // 予約ボタンクリック
-      webDriver.findElement(webConfig.reserveSelector()).click();
+      if (isChecked) {
+        log.info("チェック済み");
+      }
 
-      // 予約対象者が表示されるまで待機
-      webDriverWait.until(driver -> driver
-          .findElement(webConfig.userIdSelector())
-          .isEnabled());
-
-      // 予約対象者にチェックする
-      if (!(webDriver.findElement(webConfig.userIdSelector()).isSelected())) {
+      if (!isChecked) {
+        log.info("チェックされていないので対象者をチェック");
         webDriver.findElement(webConfig.userIdSelector()).click();
       }
 
       // 予約実行
       webDriver.findElement(webConfig.executeSelector()).click();
 
-      // 予約確認のアラートが表示されるまで待機する
-      webDriverWait.until(ExpectedConditions.alertIsPresent());
-
       // アラートの確認を受け入れる
       webDriver.switchTo().alert().accept();
 
-      return true;
+      // 予約受付番号を取得する
+      final String reservationOrderString =
+          webDriver.findElement(webConfig.reservationOrderSelector()).getText();
+
+      return Integer.parseInt(reservationOrderString);
 
     } catch (Exception e) {
-
       log.error("{}の予約中にエラー発生 原因: {}", targetName, e.toString());
-
-      return false;
+      throw new RuntimeException(e);
 
     } finally {
       webDriver.quit();

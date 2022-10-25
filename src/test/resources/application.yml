@@ -24,6 +24,9 @@ kirin:
   user: user
   password: password
   url: url
+  reservation-url:
+    am: test-url
+    pm: test-url
   detail-url: detail-url
   interview-url: interview-url
   start-time:

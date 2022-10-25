@@ -1,6 +1,7 @@
 package com.kirin.reservation.service
 
 import com.kirin.reservation.factory.LineMessageFactory
+import com.kirin.reservation.model.ReservationDate
 import com.kirin.reservation.model.ReservationResult
 import com.linecorp.bot.client.LineMessagingClient
 import com.linecorp.bot.model.PushMessage
@@ -23,11 +24,9 @@ class LineMessageServiceSpec extends Specification {
     @SpringBean
     LineMessageFactory lineMessageFactory = Mock()
 
-    def "sendReservationResult_予約成功を通知"() {
+    def "sendSuccessMessage_予約成功を通知"() {
         setup:
-        def result = Mock(ReservationResult) {
-            isSuccess() >> true
-        }
+        def result = Mock(ReservationResult)
 
         1 * lineMessageFactory.createSuccessMessage(_) >> GroovyMock(Message)
 
@@ -37,17 +36,32 @@ class LineMessageServiceSpec extends Specification {
                 }
 
         when:
-        lineMessageService.sendReservationResult(result)
+        lineMessageService.sendSuccessMessage(result)
 
         then:
         noExceptionThrown()
     }
 
-    def "sendReservationResult_予約失敗を通知"() {
+    def "sendSuccessMessage_通知失敗"() {
         setup:
-        def result = Mock(ReservationResult) {
-            isSuccess() >> false
+        def result = Mock(ReservationResult)
+
+        1 * lineMessageFactory.createSuccessMessage(_) >> GroovyMock(Message)
+
+        1 * lineMessagingClient.pushMessage(_ as PushMessage) >> {
+            throw new RuntimeException()
         }
+
+        when:
+        lineMessageService.sendSuccessMessage(result)
+
+        then:
+        noExceptionThrown()
+    }
+
+    def "sendFailureMessage_予約失敗を通知"() {
+        setup:
+        def reservationDate = Mock(ReservationDate)
 
         1 * lineMessageFactory.createFailureMessage(_) >> GroovyMock(Message)
 
@@ -57,17 +71,15 @@ class LineMessageServiceSpec extends Specification {
                 }
 
         when:
-        lineMessageService.sendReservationResult(result)
+        lineMessageService.sendFailureMessage(reservationDate)
 
         then:
         noExceptionThrown()
     }
 
-    def "sendReservationResult_通知失敗"() {
+    def "sendFailureMessage_通知失敗"() {
         setup:
-        def result = Mock(ReservationResult) {
-            isSuccess() >> false
-        }
+        def reservationDate = Mock(ReservationDate)
 
         1 * lineMessageFactory.createFailureMessage(_) >> GroovyMock(Message)
 
@@ -76,7 +88,7 @@ class LineMessageServiceSpec extends Specification {
         }
 
         when:
-        lineMessageService.sendReservationResult(result)
+        lineMessageService.sendFailureMessage(reservationDate)
 
         then:
         noExceptionThrown()

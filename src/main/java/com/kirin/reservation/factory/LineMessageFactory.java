@@ -1,5 +1,6 @@
 package com.kirin.reservation.factory;
 
+import com.kirin.reservation.model.ReservationDate;
 import com.kirin.reservation.model.ReservationResult;
 import com.linecorp.bot.model.action.URIAction;
 import com.linecorp.bot.model.message.FlexMessage;
@@ -26,10 +27,10 @@ public class LineMessageFactory {
 
   private static final String FAILURE_MESSAGE = "%sの予約に失敗しました...(%s %s) ";
   private static final String SUCCESS_TITLE = "予約が確定しました";
-  private static final String SUCCESS_DETAIL = "%s(%s %s)";
+  private static final String SUCCESS_DETAIL = "%s(%s %s) : %d番";
   private static final String RESERVATION_DETAIL_LABEL = "予約詳細";
   private static final String RESERVATION_WEB_INTERVIEW_LABEL = "WEB問診票";
-  private static final String ALT_TEXT = "LINEBOTからの通知";
+  private static final String ALT_TEXT = "予約確定通知(%s)";
 
   @Value("${kirin.detail-url}")
   private String reservationDetailUrl;
@@ -39,14 +40,16 @@ public class LineMessageFactory {
   /**
    * 予約失敗時の送信メッセージを作成する
    *
-   * @param result 予約結果ドメイン
+   * @param reservationDate 予約情報ドメイン
    * @return 送信メッセージ(TEXT)
    */
-  public Message createFailureMessage(ReservationResult result) {
+  public Message createFailureMessage(ReservationDate reservationDate) {
 
     return new TextMessage(
-        String.format(FAILURE_MESSAGE, result.getName(), result.getFormattedDate(),
-            result.getReservationTime().getDiscription()));
+        String.format(FAILURE_MESSAGE,
+            reservationDate.getName(),
+            reservationDate.getFormattedDate(),
+            reservationDate.getReservationTime().getDescription()));
   }
 
   /**
@@ -66,8 +69,9 @@ public class LineMessageFactory {
         .text(String.format(
             SUCCESS_DETAIL,
             result.getName(),
-            result.getFormattedDate(),
-            result.getReservationTime().getDiscription()))
+            result.getDate(),
+            result.getReservationTime().getDescription(),
+            result.getReservationOrder()))
         .size(FlexFontSize.Md)
         .build();
 
@@ -108,7 +112,9 @@ public class LineMessageFactory {
         .footer(footerBlock)
         .build();
 
-    return new FlexMessage(ALT_TEXT, bubble);
+    final String altText = String.format(ALT_TEXT, result.getName());
+
+    return new FlexMessage(altText, bubble);
   }
 
 }
