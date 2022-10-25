@@ -6,10 +6,7 @@ import com.kirin.reservation.config.WebDriverConfig
 import com.kirin.reservation.model.ReservationDate
 import com.kirin.reservation.model.ReservationTime
 import com.kirin.reservation.repository.database.ReservationDateRepository
-import org.openqa.selenium.Alert
-import org.openqa.selenium.By
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.WebElement
+import org.openqa.selenium.*
 import org.openqa.selenium.remote.RemoteWebDriver
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.spockframework.spring.SpringBean
@@ -18,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.retry.annotation.EnableRetry
 import spock.lang.Specification
 
+import java.nio.file.Path
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = ReservationService.class)
@@ -78,6 +76,9 @@ class ReservationServiceSpec extends Specification {
             switchTo() >> Mock(WebDriver.TargetLocator) {
                 alert() >> Mock(Alert)
             }
+            getScreenshotAs(_ as OutputType<Object>) >> Mock(File) {
+                toPath() >> Mock(Path)
+            }
         }
 
         1 * webDriverConfig.getWebDriverWait(_) >> Mock(WebDriverWait) {
@@ -114,6 +115,7 @@ class ReservationServiceSpec extends Specification {
                     throw new RuntimeException()
                 }
             }
+            getScreenshotAs(_ as OutputType<Object>) >> Mock(File)
         }
 
         1 * webDriverConfig.getWebDriverWait(_) >> Mock(WebDriverWait) {

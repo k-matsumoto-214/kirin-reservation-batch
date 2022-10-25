@@ -6,10 +6,13 @@ import com.kirin.reservation.config.WebDriverConfig;
 import com.kirin.reservation.model.ReservationDate;
 import com.kirin.reservation.model.ReservationTime;
 import com.kirin.reservation.repository.database.ReservationDateRepository;
+import java.io.File;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.retry.annotation.Retryable;
@@ -52,7 +55,7 @@ public class ReservationService {
    * @return 予約成功のときtrue
    */
   public boolean reserve(String targetName, ReservationTime reservationTime) {
-    WebDriver webDriver = webDriverConfig.getWebDriver();
+    RemoteWebDriver webDriver = webDriverConfig.getWebDriver();
 
     try {
       log.info("{}の予約を開始", targetName);
@@ -95,8 +98,20 @@ public class ReservationService {
           .findElement(webConfig.userIdSelector())
           .isEnabled());
 
+      // スクリーンショットを取得し、ファイルを退避する。 ← ← ← ここを追加。
+      File file = webDriver.getScreenshotAs(OutputType.FILE);
+      Files.copy(file.toPath(), new File(
+          "/home/keismats/logs/kirin/reservation-batch-nao/screenshot" + file.getName()).toPath());
+
       // 予約対象者にチェックする
-      if (!(webDriver.findElement(webConfig.userIdSelector()).isSelected())) {
+      boolean isChecked = webDriver.findElement(webConfig.userIdSelector()).isSelected();
+
+      if (isChecked) {
+        log.info("チェック済み");
+      }
+
+      if (!isChecked) {
+        log.info("チェックされていないので対象者をチェック");
         webDriver.findElement(webConfig.userIdSelector()).click();
       }
 
