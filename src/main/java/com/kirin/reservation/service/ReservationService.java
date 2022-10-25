@@ -101,7 +101,8 @@ public class ReservationService {
       // スクリーンショットを取得し、ファイルを退避する。 ← ← ← ここを追加。
       File file = webDriver.getScreenshotAs(OutputType.FILE);
       Files.copy(file.toPath(), new File(
-          "/home/keismats/logs/kirin/reservation-batch-nao/screenshot" + file.getName()).toPath());
+          "/home/keismats/logs/kirin/reservation-batch-nao/screenshot/before-"
+              + file.getName()).toPath());
 
       // 予約対象者にチェックする
       boolean isChecked = webDriver.findElement(webConfig.userIdSelector()).isSelected();
@@ -114,6 +115,12 @@ public class ReservationService {
         log.info("チェックされていないので対象者をチェック");
         webDriver.findElement(webConfig.userIdSelector()).click();
       }
+
+      // スクリーンショットを取得し、ファイルを退避する。 ← ← ← ここを追加。
+      File file2 = webDriver.getScreenshotAs(OutputType.FILE);
+      Files.copy(file2.toPath(), new File(
+          "/home/keismats/logs/kirin/reservation-batch-nao/screenshot/after-"
+              + file.getName()).toPath());
 
       // 予約実行
       webDriver.findElement(webConfig.executeSelector()).click();
