@@ -1,12 +1,11 @@
 package com.kirin.reservation.config;
 
+import com.linecorp.bot.client.LineMessagingClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-import com.linecorp.bot.client.LineMessagingClient;
-
-@Component
+@Configuration
 public class LineMessageClientConfig {
 
   @Value("${line.bot.channel-token}")

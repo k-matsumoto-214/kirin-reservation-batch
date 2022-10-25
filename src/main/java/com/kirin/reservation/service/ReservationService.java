@@ -1,5 +1,6 @@
 package com.kirin.reservation.service;
 
+import com.kirin.reservation.config.KirinWebConfig;
 import com.kirin.reservation.config.TimeConfig;
 import com.kirin.reservation.config.WebDriverConfig;
 import com.kirin.reservation.model.ReservationDate;
@@ -8,11 +9,9 @@ import com.kirin.reservation.repository.database.ReservationDateRepository;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -21,23 +20,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReservationService {
 
-  @Value("${kirin.password}")
-  private String kirinPassword;
-
-  @Value("${kirin.user}")
-  private String kirinUser;
-
-  @Value("${kirin.url}")
-  private String kirinUrl;
-
-  @Value("${kirin.target-id}")
-  private String targetUserId;
-
   private final ReservationDateRepository reservationDateRepository;
 
   private final WebDriverConfig webDriverConfig;
 
   private final TimeConfig timeConfig;
+
+  private final KirinWebConfig webConfig;
 
   /**
    * DBから予約情報を取得する
@@ -67,53 +56,57 @@ public class ReservationService {
 
     try {
       log.info("{}の予約を開始", targetName);
+
       WebDriverWait webDriverWait = webDriverConfig.getWebDriverWait(webDriver);
-      webDriver.get(kirinUrl);
+      webDriver.get(webConfig.url());
 
-      webDriverWait.until(driver -> driver.getTitle().toLowerCase().startsWith("ログイン"));
+      // ログイン画面表示待機
+      webDriverWait.until(driver -> driver.getTitle().startsWith(webConfig.loginTitle()));
 
-      webDriver.findElement(By.cssSelector("#email")).sendKeys(kirinUser);
-      webDriver.findElement(By.cssSelector("#password")).sendKeys(kirinPassword);
-      webDriver.findElement(By.cssSelector("#login_content > ul > li > input")).click();
+      // email入力
+      webDriver.findElement(webConfig.emailSelector()).sendKeys(webConfig.user());
+
+      // password入力
+      webDriver.findElement(webConfig.passwordSelector()).sendKeys(webConfig.password());
+
+      // ログイン実行
+      webDriver.findElement(webConfig.loginSelector()).click();
+
       log.info("ログイン");
-
-      // 予約時間になるまで待機
-      int waitCount = 0;
 
       // 予約開始時間まで待機
       timeConfig.until(reservationTime);
 
       log.info("予約開始");
+
+      // 予約開始時間になったら画面更新
       webDriver.navigate().refresh();
 
       // 予約ボタンが表示されるまで待機
-      webDriverWait.until(driver -> driver
-          .findElement(
-              By.cssSelector(
-                  "#reserve_show_periods_1 > table > tbody > tr.row-available > td:nth-child(6) > a"))
-          .isDisplayed());
+      webDriverWait.until(driver ->
+          driver.findElement(webConfig.reserveSelector())
+              .isDisplayed());
 
-      webDriver
-          .findElement(
-              By.cssSelector(
-                  "#reserve_show_periods_1 > table > tbody > tr.row-available > td:nth-child(6) > a"))
-          .click();
+      // 予約ボタンクリック
+      webDriver.findElement(webConfig.reserveSelector()).click();
 
       // 予約対象者が表示されるまで待機
-      String userIdSelector = "#user_id_" + targetUserId;
-      webDriverWait.until(driver -> driver.findElement(By.cssSelector(userIdSelector))
+      webDriverWait.until(driver -> driver
+          .findElement(webConfig.userIdSelector())
           .isDisplayed());
 
       // 予約対象者にチェックする
-      if (!webDriver.findElement(By.cssSelector(userIdSelector)).isSelected()) {
-        webDriver.findElement(By.cssSelector(userIdSelector)).click();
+      if (!(webDriver.findElement(webConfig.userIdSelector()).isSelected())) {
+        webDriver.findElement(webConfig.userIdSelector()).click();
       }
 
       // 予約実行
-      webDriver.findElement(By.cssSelector("#reserve > div > form > ul > li > input")).click();
+      webDriver.findElement(webConfig.executeSelector()).click();
 
       // 予約確認のアラートが表示されるまで待機する
       webDriverWait.until(ExpectedConditions.alertIsPresent());
+
+      // アラートの確認を受け入れる
       webDriver.switchTo().alert().accept();
 
       return true;

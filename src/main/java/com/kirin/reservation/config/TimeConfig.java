@@ -72,7 +72,7 @@ public class TimeConfig {
    */
   public void until(ReservationTime reservationTime) {
     LocalDateTime target;
-    
+
     if (Objects.equals(reservationTime, ReservationTime.AM)) {
       // 午前予約の時
       target = this.getStartDateTimeAm();
@@ -82,6 +82,7 @@ public class TimeConfig {
     }
 
     int waitCount = 0;
+
     while (this.getNow().isBefore(target)) {
       // 100,000,000回ループするごとにログ表示
       if (waitCount % (1000 * 1000 * 100) == 0) {

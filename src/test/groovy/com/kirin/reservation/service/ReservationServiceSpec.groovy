@@ -1,5 +1,6 @@
 package com.kirin.reservation.service
 
+import com.kirin.reservation.config.KirinWebConfig
 import com.kirin.reservation.config.TimeConfig
 import com.kirin.reservation.config.WebDriverConfig
 import com.kirin.reservation.model.ReservationDate
@@ -34,6 +35,9 @@ class ReservationServiceSpec extends Specification {
 
     @SpringBean
     TimeConfig timeConfig = Mock()
+
+    @SpringBean
+    KirinWebConfig kirinWebConfig = Mock()
 
     def "findReservationTarget_予約情報を取得できる"() {
         setup:
@@ -80,6 +84,10 @@ class ReservationServiceSpec extends Specification {
         }
 
         1 * timeConfig.until(_)
+
+        1 * kirinWebConfig.emailSelector() >> Mock(By)
+        1 * kirinWebConfig.passwordSelector() >> Mock(By)
+
 
         when:
         def actual = reservationService.reserve("name", GroovyMock(ReservationTime))
