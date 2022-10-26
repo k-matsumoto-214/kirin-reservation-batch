@@ -2,20 +2,18 @@ package com.kirin.reservation.model
 
 import spock.lang.Specification
 
-import java.time.LocalDate
-
 class ReservationResultSpec extends Specification {
 
     def "of_ファクトリ"() {
         setup:
         def name = "name"
-        def date = LocalDate.of(2020, 10, 30)
+        def date = "2020年10月30日"
         def reservationTime = ReservationTime.AM
         def reservationOrder = 1
 
         def reservationDate = Mock(ReservationDate) {
             getName() >> name
-            getDate() >> date
+            getFormattedDate() >> date
             getReservationTime() >> reservationTime
         }
 
@@ -25,7 +23,7 @@ class ReservationResultSpec extends Specification {
         then:
         actual.getName() == name
         actual.getDate() == date
-        actual.getReservationTime() == reservationTime
+        actual.getReservationTime() == reservationTime.getDescription()
         actual.getReservationOrder() == reservationOrder
     }
 }

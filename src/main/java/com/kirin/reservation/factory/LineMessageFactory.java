@@ -70,7 +70,7 @@ public class LineMessageFactory {
             SUCCESS_DETAIL,
             result.getName(),
             result.getDate(),
-            result.getReservationTime().getDescription(),
+            result.getReservationTime(),
             result.getReservationOrder()))
         .size(FlexFontSize.Md)
         .build();

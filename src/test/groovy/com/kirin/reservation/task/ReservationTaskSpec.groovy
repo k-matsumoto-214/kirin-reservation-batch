@@ -29,7 +29,9 @@ class ReservationTaskSpec extends Specification {
         setup:
         1 * timeConfig.getNow() >> LocalDateTime.now()
         1 * timeConfig.getReservationTime(_) >> GroovyMock(ReservationTime)
-        1 * reservationService.findReservationTarget(*_) >> Mock(ReservationDate)
+        1 * reservationService.findReservationTarget(*_) >> Mock(ReservationDate) {
+            getReservationTime() >> GroovyMock(ReservationTime)
+        }
         1 * reservationService.reserve(*_) >> 1
         1 * lineMessageService.sendSuccessMessage(_)
 

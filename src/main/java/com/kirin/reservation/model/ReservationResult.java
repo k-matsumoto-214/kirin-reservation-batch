@@ -1,6 +1,5 @@
 package com.kirin.reservation.model;
 
-import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,8 +12,8 @@ public class ReservationResult {
 
 
   private final String name;
-  private final LocalDate date;
-  private final ReservationTime reservationTime;
+  private final String date;
+  private final String reservationTime;
   private final int reservationOrder;
 
   /**
@@ -27,8 +26,8 @@ public class ReservationResult {
   public static ReservationResult of(ReservationDate reservationDate, int reservationOrder) {
     return ReservationResult.builder()
         .name(reservationDate.getName())
-        .date(reservationDate.getDate())
-        .reservationTime(reservationDate.getReservationTime())
+        .date(reservationDate.getFormattedDate())
+        .reservationTime(reservationDate.getReservationTime().getDescription())
         .reservationOrder(reservationOrder)
         .build();
   }
