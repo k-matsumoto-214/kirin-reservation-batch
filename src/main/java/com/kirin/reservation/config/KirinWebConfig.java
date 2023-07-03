@@ -1,12 +1,16 @@
 package com.kirin.reservation.config;
 
 import com.kirin.reservation.model.ReservationTime;
+import java.time.Clock;
+import java.time.DayOfWeek;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class KirinWebConfig {
 
   @Value("${kirin.password}")
@@ -24,8 +28,13 @@ public class KirinWebConfig {
   @Value("${kirin.reservation-url.pm}")
   private String kirinReservationUrlPm;
 
+  @Value("${kirin.reservation-url.pm-sat}")
+  private String kirinReservationUrlPmSat;
+
   @Value("${kirin.target-id}")
   private String targetUserId;
+
+  private final TimeConfig timeConfig;
 
   private static final String SELECTOR_EMAIL = "#email";
   private static final String SELECTOR_PASSWORD = "#password";
@@ -75,13 +84,21 @@ public class KirinWebConfig {
    * 予約ページのURLを返す
    *
    * @param reservationTime 予約時間帯
+   * @param clock
    * @return 予約ページのURL
    */
-  public String reservationUrl(ReservationTime reservationTime) {
+  public String reservationUrl(ReservationTime reservationTime, Clock clock) {
+    // 午前の場合
     if (Objects.equals(reservationTime, ReservationTime.AM)) {
       return this.kirinReservationUrlAM;
     }
 
+    // 午後 & 土曜日の場合
+    if (Objects.equals(timeConfig.getNowDayOfWeek(clock), DayOfWeek.SATURDAY)) {
+      return this.kirinReservationUrlPmSat;
+    }
+
+    // 午後 & 土曜日以外の場合
     return this.kirinReservationUrlPm;
   }
 
