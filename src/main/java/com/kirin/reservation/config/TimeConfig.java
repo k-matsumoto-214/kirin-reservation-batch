@@ -1,9 +1,10 @@
 package com.kirin.reservation.config;
 
 import com.kirin.reservation.model.ReservationTime;
+import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,43 +23,36 @@ public class TimeConfig {
   @DateTimeFormat(pattern = "HH:mm:ss")
   private LocalTime startTimePm;
 
-  private static ZoneId zoneId = ZoneId.of("Asia/Tokyo");
-
-  /**
-   * 日付を当日、時刻を環境変数で指定したLocalDateTimeを取得する
-   *
-   * @return 午前予約開始時間のLocalDateTime
-   */
-  public LocalDateTime getStartDateTimeAm() {
-    return LocalDateTime.now(zoneId).with(startTimeAm);
-  }
-
-  /**
-   * 日付を当日、時刻を環境変数で指定したLocalDateTimeを取得する
-   *
-   * @return 午後予約開始時間のLocalDateTime
-   */
-  public LocalDateTime getStartDateTimePm() {
-    return LocalDateTime.now(zoneId).with(startTimePm);
-  }
 
   /**
    * 現在時刻を取得する
    *
+   * @param clock
    * @return 現在時刻
    */
-  public LocalDateTime getNow() {
-    return LocalDateTime.now(zoneId);
+  public LocalDateTime getNow(Clock clock) {
+    return LocalDateTime.now(clock);
+  }
+
+  /**
+   * 現在曜日を取得する
+   *
+   * @return 現在曜日
+   */
+  public DayOfWeek getNowDayOfWeek(Clock clock) {
+    return LocalDateTime.now(clock).getDayOfWeek();
   }
 
   /**
    * 渡された時刻からその時刻が午前,午後予約か判断して時間帯ドメインを返す
    *
-   * @param now 現在時刻
+   * @param clock
    * @return 予約時間帯ドメイン
    */
-  public ReservationTime getReservationTime(LocalDateTime now) {
-    if (now.isBefore(this.getStartDateTimeAm())) {
+  public ReservationTime getReservationTime(Clock clock) {
+    if (LocalDateTime.now(clock)
+        .isBefore(
+            LocalDateTime.now(clock).with(startTimeAm))) {
       return ReservationTime.AM;
     } else {
       return ReservationTime.PM;
@@ -66,24 +60,35 @@ public class TimeConfig {
   }
 
   /**
-   * 引数の予約開始時間帯になるまで待機する
+   * 引数の予約時間帯タイプに対応する予約開始時間を取得する
    *
-   * @param reservationTime 待機目標の予約時間帯オブジェクト
+   * @param reservationTime 予約時間帯オブジェクト
+   * @param clock
+   * @return 予約時間帯タイプに対応する予約開始時間
    */
-  public void until(ReservationTime reservationTime) {
-    LocalDateTime target;
+  public LocalDateTime getTargetTime(ReservationTime reservationTime, Clock clock) {
 
     if (Objects.equals(reservationTime, ReservationTime.AM)) {
       // 午前予約の時
-      target = this.getStartDateTimeAm();
+      return LocalDateTime.now(clock).with(startTimeAm);
+
     } else {
       //　午後予約の時
-      target = this.getStartDateTimePm();
+      return LocalDateTime.now(clock).with(startTimePm);
     }
 
+  }
+
+  /**
+   * 引数の待機目標時刻になるまで待機する
+   *
+   * @param target 待機目標の時刻
+   * @param clock
+   */
+  public void until(LocalDateTime target, Clock clock) {
     int waitCount = 0;
 
-    while (this.getNow().isBefore(target)) {
+    while (LocalDateTime.now(clock).isBefore(target)) {
       // 100,000,000回ループするごとにログ表示
       if (waitCount % (1000 * 1000 * 100) == 0) {
         log.info("待機中");

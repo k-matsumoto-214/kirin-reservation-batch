@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
 
+import java.time.Clock
 import java.time.LocalDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = ReservationTask.class)
@@ -24,10 +25,12 @@ class ReservationTaskSpec extends Specification {
     TimeConfig timeConfig = Mock()
     @SpringBean
     LineMessageService lineMessageService = Mock()
+    @SpringBean
+    Clock clock = Mock()
 
     def "executeReservation_正常"() {
         setup:
-        1 * timeConfig.getNow() >> LocalDateTime.now()
+        1 * timeConfig.getNow(clock) >> LocalDateTime.now()
         1 * timeConfig.getReservationTime(_) >> GroovyMock(ReservationTime)
         1 * reservationService.findReservationTarget(*_) >> Mock(ReservationDate) {
             getReservationTime() >> GroovyMock(ReservationTime)
@@ -45,7 +48,7 @@ class ReservationTaskSpec extends Specification {
 
     def "executeReservation_異常"() {
         setup:
-        1 * timeConfig.getNow() >> LocalDateTime.now()
+        1 * timeConfig.getNow(clock) >> LocalDateTime.now()
         1 * timeConfig.getReservationTime(_) >> GroovyMock(ReservationTime)
         1 * reservationService.findReservationTarget(*_) >> Mock(ReservationDate)
         1 * reservationService.reserve(*_) >> {
@@ -63,7 +66,7 @@ class ReservationTaskSpec extends Specification {
 
     def "executeReservation_正常_予約なし"() {
         setup:
-        1 * timeConfig.getNow() >> LocalDateTime.now()
+        1 * timeConfig.getNow(clock) >> LocalDateTime.now()
         1 * timeConfig.getReservationTime(_) >> GroovyMock(ReservationTime)
         1 * reservationService.findReservationTarget(*_) >> Mock(ReservationDate) {
             isEmpty() >> true

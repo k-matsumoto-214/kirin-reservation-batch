@@ -18,6 +18,7 @@ import org.springframework.retry.annotation.EnableRetry
 import spock.lang.Specification
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = ReservationService.class)
 @EnableRetry
@@ -82,7 +83,8 @@ class ReservationServiceSpec extends Specification {
             }
         }
 
-        1 * timeConfig.until(_)
+        1 * timeConfig.getTargetTime(*_) >> GroovyMock(LocalDateTime)
+        1 * timeConfig.until(*_)
 
         1 * kirinWebConfig.emailSelector() >> Mock(By)
         1 * kirinWebConfig.passwordSelector() >> Mock(By)

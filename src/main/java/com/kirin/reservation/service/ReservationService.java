@@ -6,7 +6,9 @@ import com.kirin.reservation.config.WebDriverConfig;
 import com.kirin.reservation.model.ReservationDate;
 import com.kirin.reservation.model.ReservationTime;
 import com.kirin.reservation.repository.database.ReservationDateRepository;
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
@@ -25,6 +27,9 @@ public class ReservationService {
   private final TimeConfig timeConfig;
 
   private final KirinWebConfig webConfig;
+
+  private Clock clock;
+
 
   /**
    * DBから予約情報を取得する
@@ -68,13 +73,16 @@ public class ReservationService {
 
       log.info("ログイン");
 
+      // 予約開始時刻を取得
+      LocalDateTime targetTime = timeConfig.getTargetTime(reservationTime, clock);
+
       // 予約開始時間まで待機
-      timeConfig.until(reservationTime);
+      timeConfig.until(targetTime, clock);
 
       log.info("予約開始");
 
       // 予約開始時間になったら予約画面を開く
-      webDriver.get(webConfig.reservationUrl(reservationTime));
+      webDriver.get(webConfig.reservationUrl(reservationTime, clock));
 
       // 予約対象者のチェックを確認する
       boolean isChecked = webDriver.findElement(webConfig.userIdSelector()).isSelected();
