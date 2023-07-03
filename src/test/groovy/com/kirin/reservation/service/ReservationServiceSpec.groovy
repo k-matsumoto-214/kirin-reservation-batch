@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.retry.annotation.EnableRetry
 import spock.lang.Specification
 
+import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -60,9 +61,8 @@ class ReservationServiceSpec extends Specification {
         }
 
         when:
-        def actual =
-                reservationService.findReservationTarget(
-                        "name", GroovyMock(LocalDate), GroovyMock(ReservationTime))
+        reservationService.findReservationTarget(
+                "name", GroovyMock(LocalDate), GroovyMock(ReservationTime))
 
         then:
         thrown(RuntimeException)
@@ -95,7 +95,7 @@ class ReservationServiceSpec extends Specification {
 
 
         when:
-        def actual = reservationService.reserve("name", GroovyMock(ReservationTime))
+        def actual = reservationService.reserve("name", GroovyMock(ReservationTime), Mock(Clock))
 
         then:
         actual == Integer.parseInt(reservationOrderString)
@@ -124,7 +124,7 @@ class ReservationServiceSpec extends Specification {
         0 * kirinWebConfig.reservationOrderSelector()
 
         when:
-        reservationService.reserve("name", GroovyMock(ReservationTime))
+        reservationService.reserve("name", GroovyMock(ReservationTime), Mock(Clock))
 
         then:
         thrown(RuntimeException)

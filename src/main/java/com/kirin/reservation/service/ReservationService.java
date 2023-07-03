@@ -28,8 +28,6 @@ public class ReservationService {
 
   private final KirinWebConfig webConfig;
 
-  private Clock clock;
-
 
   /**
    * DBから予約情報を取得する
@@ -52,9 +50,10 @@ public class ReservationService {
    *
    * @param targetName      予約対象者名
    * @param reservationTime 予約時間帯
+   * @param clock
    * @return 予約成功のとき受付番号
    */
-  public int reserve(String targetName, ReservationTime reservationTime) {
+  public int reserve(String targetName, ReservationTime reservationTime, Clock clock) {
     WebDriver webDriver = webDriverConfig.getWebDriver();
 
     try {

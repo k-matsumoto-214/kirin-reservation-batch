@@ -49,7 +49,7 @@ public class ReservationTask {
 
     try {
       // 予約実行
-      int reservationOrder = reservationService.reserve(targetName, reservationTime);
+      int reservationOrder = reservationService.reserve(targetName, reservationTime, clock);
 
       ReservationResult result = ReservationResult.of(reservationDate, reservationOrder);
 
