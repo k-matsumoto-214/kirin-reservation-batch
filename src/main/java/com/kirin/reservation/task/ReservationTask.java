@@ -6,6 +6,7 @@ import com.kirin.reservation.model.ReservationResult;
 import com.kirin.reservation.model.ReservationTime;
 import com.kirin.reservation.service.LineMessageService;
 import com.kirin.reservation.service.ReservationService;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +28,14 @@ public class ReservationTask {
 
   private final LineMessageService lineMessageService;
 
+  private final Clock clock;
+
   @Scheduled(cron = "${cron}")
   public void executeReservation() {
-    LocalDateTime now = timeConfig.getNow(); // 実行日付を取得
+    LocalDateTime now = timeConfig.getNow(clock); // 実行日付を取得
 
-    /**
-     * バッチ実行時刻によって午前予約実施か午後予約実施かを判断する
-     **/
-    ReservationTime reservationTime = timeConfig.getReservationTime(now);
+    // バッチ実行時刻によって午前予約実施か午後予約実施かを判断する
+    ReservationTime reservationTime = timeConfig.getReservationTime(clock);
 
     // DBに登録されている実行日の予約情報を取得
     ReservationDate reservationDate = reservationService.findReservationTarget(targetName,
@@ -48,7 +49,7 @@ public class ReservationTask {
 
     try {
       // 予約実行
-      int reservationOrder = reservationService.reserve(targetName, reservationTime);
+      int reservationOrder = reservationService.reserve(targetName, reservationTime, clock);
 
       ReservationResult result = ReservationResult.of(reservationDate, reservationOrder);
 

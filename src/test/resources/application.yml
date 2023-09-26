@@ -25,13 +25,14 @@ kirin:
   password: password
   url: url
   reservation-url:
-    am: test-url
-    pm: test-url
+    am: test-url-am
+    pm: test-url-pm
+    pm-sat: test-url-pm-sat
   detail-url: detail-url
   interview-url: interview-url
   start-time:
-    am: 07:00:00
-    pm: 13:00:00
+    am: "07:00:00"
+    pm: "13:00:00"
   target-name: target-name
   target-id: target-id
 
