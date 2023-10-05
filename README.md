@@ -11,15 +11,15 @@
   - Java
   - SpringBoot
   - LINEBotSDK
-  - [Groovy(自動テスト)](https://github.com/k-matsumoto-214/kirin-linebot/tree/master/src/test/groovy/com/kirin/linebot)・・・カバレッジ90%以上(コンフィグクラス含まない)
-  - [Spock(自動テスト)](https://github.com/k-matsumoto-214/kirin-linebot/tree/master/src/test/groovy/com/kirin/linebot)・・・カバレッジ90%以上(コンフィグクラス含まない)
+  - [Groovy/Spock(自動テスト)](https://github.com/k-matsumoto-214/kirin-linebot/tree/master/src/test/groovy/com/kirin/linebot)・・・カバレッジ90%以上(コンフィグクラス含まない)
+  - [GitHubActions(自動テスト・デプロイ)](https://github.com/k-matsumoto-214/kirin-linebot/actions)
 - 予約実行バッチ
   - Java
   - SpringBoot
   - LINEBotSDK
   - Selenium
-  - [Groovy(自動テスト)](https://github.com/k-matsumoto-214/kirin-reservation-batch/tree/master/src/test/groovy/com/kirin/reservation)・・・カバレッジ90%以上(コンフィグクラス含まない)
-  - [Spock(自動テスト)](https://github.com/k-matsumoto-214/kirin-reservation-batch/tree/master/src/test/groovy/com/kirin/reservation)・・・カバレッジ90%以上(コンフィグクラス含まない)
+  - [Groovy/Spock(自動テスト)](https://github.com/k-matsumoto-214/kirin-reservation-batch/tree/master/src/test/groovy/com/kirin/reservation)・・・カバレッジ90%以上(コンフィグクラス含まない)
+  - [GitHubActions(自動テスト・デプロイ)](https://github.com/k-matsumoto-214/kirin-reservation-batch/actions)
 - DB
   - MySQL
 
@@ -36,7 +36,8 @@
   - 予約成功時には、予約順・問診票へのリンクを含んだ通知を送信する
 
 ### 動作イメージ
-![linebot](https://github.com/k-matsumoto-214/kirin-reservation-batch/assets/91876695/4ee2afc9-42e1-43e7-a1b6-2a711478f77c)
-![スクリーンショット 2023-10-05 10 31 51](https://github.com/k-matsumoto-214/kirin-reservation-batch/assets/91876695/9f07e64f-f4e6-47a2-bf76-6bb82ace0622)
+![linebot](https://github.com/k-matsumoto-214/kirin-linebot/assets/91876695/9153b065-be71-4519-aa62-87892bfc0eec)
+![スクリーンショット 2023-10-05 11 37 29](https://github.com/k-matsumoto-214/kirin-linebot/assets/91876695/4e0df785-2cd5-495f-9627-ed460da1b415)
+
 
 
