@@ -11,15 +11,15 @@
   - Java
   - SpringBoot
   - LINEBotSDK
-  - Groovy(自動テスト)
-  - Spock（自動テスト）
+  - [Groovy(自動テスト)](https://github.com/k-matsumoto-214/kirin-linebot/tree/master/src/test/groovy/com/kirin/linebot)・・・カバレッジ90%以上(コンフィグクラス含まない)
+  - [Spock(自動テスト)](https://github.com/k-matsumoto-214/kirin-linebot/tree/master/src/test/groovy/com/kirin/linebot)・・・カバレッジ90%以上(コンフィグクラス含まない)
 - 予約実行バッチ
   - Java
   - SpringBoot
   - LINEBotSDK
   - Selenium
-  - [Groovy(自動テスト)](https://github.com/k-matsumoto-214/kirin-reservation-batch/tree/master/src/test/groovy/com/kirin/reservation)
-  - [Spock（自動テスト）](https://github.com/k-matsumoto-214/kirin-reservation-batch/tree/master/src/test/groovy/com/kirin/reservation)
+  - [Groovy(自動テスト)](https://github.com/k-matsumoto-214/kirin-reservation-batch/tree/master/src/test/groovy/com/kirin/reservation)・・・カバレッジ90%以上(コンフィグクラス含まない)
+  - [Spock(自動テスト)](https://github.com/k-matsumoto-214/kirin-reservation-batch/tree/master/src/test/groovy/com/kirin/reservation)・・・カバレッジ90%以上(コンフィグクラス含まない)
 - DB
   - MySQL
 
