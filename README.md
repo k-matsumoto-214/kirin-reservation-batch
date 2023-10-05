@@ -11,11 +11,15 @@
   - Java
   - SpringBoot
   - LINEBotSDK
+  - Groovy(自動テスト)
+  - Spock（自動テスト）
 - 予約実行バッチ
   - Java
   - SpringBoot
   - LINEBotSDK
   - Selenium
+  - [Groovy(自動テスト)](https://github.com/k-matsumoto-214/kirin-reservation-batch/tree/master/src/test/groovy/com/kirin/reservation)
+  - [Spock（自動テスト）](https://github.com/k-matsumoto-214/kirin-reservation-batch/tree/master/src/test/groovy/com/kirin/reservation)
 - DB
   - MySQL
 
