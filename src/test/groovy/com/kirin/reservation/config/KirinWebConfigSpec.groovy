@@ -94,7 +94,7 @@ class KirinWebConfigSpec extends Specification {
         DayOfWeek.WEDNESDAY | ReservationTime.AM | "test-url-am"
         DayOfWeek.THURSDAY  | ReservationTime.AM | "test-url-am"
         DayOfWeek.FRIDAY    | ReservationTime.AM | "test-url-am"
-        DayOfWeek.SATURDAY  | ReservationTime.AM | "test-url-am"
+        DayOfWeek.SATURDAY  | ReservationTime.AM | "test-url-am-sat"
         DayOfWeek.SUNDAY    | ReservationTime.PM | "test-url-pm"
         DayOfWeek.MONDAY    | ReservationTime.PM | "test-url-pm"
         DayOfWeek.TUESDAY   | ReservationTime.PM | "test-url-pm"
