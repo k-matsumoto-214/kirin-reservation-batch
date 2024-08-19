@@ -82,7 +82,7 @@ public class LineMessageFactory {
         .contents(List.of(title, detail))
         .build();
 
-    final Button resavationDetailAction = Button
+    final Button reservationDetailAction = Button
         .builder()
         .style(ButtonStyle.LINK)
         .height(ButtonHeight.SMALL)
@@ -104,7 +104,7 @@ public class LineMessageFactory {
     final Box footerBlock = Box.builder()
         .layout(FlexLayout.VERTICAL)
         .spacing(FlexMarginSize.SM)
-        .contents(List.of(resavationDetailAction, reservationWebInterviewAction))
+        .contents(List.of(reservationDetailAction, reservationWebInterviewAction))
         .build();
 
     final Bubble bubble = Bubble.builder()

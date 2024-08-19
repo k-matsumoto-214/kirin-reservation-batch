@@ -23,11 +23,13 @@ public class KirinWebConfig {
   private String kirinUrl;
 
   @Value("${kirin.reservation-url.am}")
-  private String kirinReservationUrlAM;
+  private String kirinReservationUrlAm;
 
   @Value("${kirin.reservation-url.pm}")
   private String kirinReservationUrlPm;
 
+  @Value("${kirin.reservation-url.am-sat}")
+  private String kirinReservationUrlAmSat;
   @Value("${kirin.reservation-url.pm-sat}")
   private String kirinReservationUrlPmSat;
 
@@ -88,18 +90,27 @@ public class KirinWebConfig {
    * @return 予約ページのURL
    */
   public String reservationUrl(ReservationTime reservationTime, Clock clock) {
-    // 午前の場合
-    if (Objects.equals(reservationTime, ReservationTime.AM)) {
-      return this.kirinReservationUrlAM;
+    boolean isSat = Objects.equals(timeConfig.getNowDayOfWeek(clock), DayOfWeek.SATURDAY);
+    boolean isAm = Objects.equals(reservationTime, ReservationTime.AM);
+    if (isSat) {
+      // 土曜日
+      if (isAm) {
+        // 午前
+        return this.kirinReservationUrlAmSat;
+      } else {
+        // 午後
+        return this.kirinReservationUrlPmSat;
+      }
+    } else {
+      // 平日
+      if (isAm) {
+        // 午前
+        return this.kirinReservationUrlAm;
+      } else {
+        // 午後
+        return this.kirinReservationUrlPm;
+      }
     }
-
-    // 午後 & 土曜日の場合
-    if (Objects.equals(timeConfig.getNowDayOfWeek(clock), DayOfWeek.SATURDAY)) {
-      return this.kirinReservationUrlPmSat;
-    }
-
-    // 午後 & 土曜日以外の場合
-    return this.kirinReservationUrlPm;
   }
 
   public String password() {
