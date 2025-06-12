@@ -27,6 +27,7 @@ kirin:
   reservation-url:
     am: test-url-am
     pm: test-url-pm
+    am-sat: test-url-am-sat
     pm-sat: test-url-pm-sat
   detail-url: detail-url
   interview-url: interview-url

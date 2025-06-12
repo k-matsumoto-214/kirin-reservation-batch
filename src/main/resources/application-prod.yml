@@ -20,6 +20,7 @@ kirin:
   reservation-url:
     am: ${KIRIN_RESERVATION_URL_AM}
     pm: ${KIRIN_RESERVATION_URL_PM}
+    am-sat: ${KIRIN_RESERVATION_URL_AM_SAT}
     pm-sat: ${KIRIN_RESERVATION_URL_PM_SAT}
   detail-url: ${KIRIN_RESERVATION_DETAIL_URL}
   interview-url: ${KIRIN_INTERVIEW_URL}
