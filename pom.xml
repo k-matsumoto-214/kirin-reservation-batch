@@ -171,9 +171,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version> <!-- 安定した最新版 -->
+                <version>3.11.0</version> <!-- またはそれ以降のバージョン -->
                 <configuration>
-                    <release>17</release>
+                    <source>17</source> <!-- ソースのバージョン -->
+                    <target>17</target> <!-- ターゲットのバージョン -->
+                    <release>17</release> <!-- リリースバージョン -->
                 </configuration>
             </plugin>
             <plugin>
