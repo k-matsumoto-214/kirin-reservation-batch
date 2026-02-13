@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.6</version>
+        <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.kirin</groupId>
@@ -21,7 +21,7 @@
         <mybatis.version>3.0.4</mybatis.version>
         <spring-boot-starter-jdbc.version>3.5.0</spring-boot-starter-jdbc.version>
         <mysql-connector-java.version>9.3.0</mysql-connector-java.version>
-        <selenium.version>4.33.0</selenium.version>
+        <selenium.version>4.44.0</selenium.version>
         <spock.version>2.4-M6-groovy-4.0</spock.version>
         <groovy-all.version>5.0.0-beta-1</groovy-all.version>
         <h2.version>2.3.232</h2.version>
@@ -80,16 +80,10 @@
             <version>${selenium.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.retry/spring-retry -->
-        <dependency>
-            <groupId>org.springframework.retry</groupId>
-            <artifactId>spring-retry</artifactId>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
             <scope>runtime</scope>
         </dependency>
 
