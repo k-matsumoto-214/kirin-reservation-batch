@@ -21,7 +21,7 @@
         <mybatis.version>3.0.4</mybatis.version>
         <spring-boot-starter-jdbc.version>3.5.0</spring-boot-starter-jdbc.version>
         <mysql-connector-java.version>9.3.0</mysql-connector-java.version>
-        <selenium.version>4.44.0</selenium.version>
+        <selenium.version>4.40.0</selenium.version>
         <spock.version>2.4-M6-groovy-4.0</spock.version>
         <groovy-all.version>5.0.0-beta-1</groovy-all.version>
         <h2.version>2.3.232</h2.version>
