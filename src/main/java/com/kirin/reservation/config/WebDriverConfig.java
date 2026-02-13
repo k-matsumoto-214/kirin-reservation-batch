@@ -17,10 +17,13 @@ public class WebDriverConfig {
 
 	// seleniumに渡すオプションを定義
 	private static final ChromeOptions chromeOptions = new ChromeOptions()
-			.addArguments("--no-sandbox",
+			.addArguments(
+					"--no-sandbox",
 					"--disable-gpu",
 					"--disable-dev-shm-usage",
-					"--headless");
+					"--headless=new",
+					"--remote-allow-origins=*"
+			);
 
 	private static final Duration DURATION_TIMEOUT_SECONDS = Duration.ofSeconds(30);
 
