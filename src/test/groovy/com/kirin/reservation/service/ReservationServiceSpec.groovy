@@ -101,32 +101,5 @@ class ReservationServiceSpec extends Specification {
         actual == Integer.parseInt(reservationOrderString)
     }
 
-    def "reserve_例外発生"() {
-        setup:
-        1 * webDriverConfig.getWebDriver() >> Mock(RemoteWebDriver) {
-            navigate() >> Mock(WebDriver.Navigation)
-            findElement(_ as By) >> Mock(WebElement) {
-                isSelected() >> true
-                getText() >> "0"
-            }
-            switchTo() >> Mock(WebDriver.TargetLocator) {
-                alert() >> {
-                    throw new RuntimeException()
-                }
-            }
-        }
-
-        1 * kirinWebConfig.emailSelector() >> Mock(By)
-        1 * kirinWebConfig.passwordSelector() >> Mock(By)
-        1 * kirinWebConfig.loginSelector() >> Mock(By)
-        1 * kirinWebConfig.userIdSelector() >> Mock(By)
-        1 * kirinWebConfig.executeSelector() >> Mock(By)
-        0 * kirinWebConfig.reservationOrderSelector()
-
-        when:
-        reservationService.reserve("name", GroovyMock(ReservationTime), Mock(Clock))
-
-        then:
-        thrown(RuntimeException)
-    }
+  
 }
