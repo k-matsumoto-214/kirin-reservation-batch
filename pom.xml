@@ -141,7 +141,7 @@
 
     <!-- ビルド設定 -->
     <build>
-        <finalName>linebot</finalName>
+        <finalName>kirin-reservation-batch</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
