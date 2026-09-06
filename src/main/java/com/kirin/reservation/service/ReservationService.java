@@ -99,8 +99,7 @@ public class ReservationService {
 			webDriver.findElement(webConfig.executeSelector()).click();
 
 			// アラートの確認を受け入れる
-			// コメントアウト
-//      webDriver.switchTo().alert().accept();
+			webDriver.switchTo().alert().accept();
 
 			// 予約受付番号を取得する
 			final String reservationOrderString = webDriver.findElement(webConfig.reservationOrderSelector()).getText();
