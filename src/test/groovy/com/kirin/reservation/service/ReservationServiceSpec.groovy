@@ -84,7 +84,7 @@ class ReservationServiceSpec extends Specification {
         }
 
         1 * timeConfig.getTargetTime(*_) >> GroovyMock(LocalDateTime)
-//        1 * timeConfig.until(*_)
+        1 * timeConfig.until(*_)
 
         1 * kirinWebConfig.emailSelector() >> Mock(By)
         1 * kirinWebConfig.passwordSelector() >> Mock(By)
