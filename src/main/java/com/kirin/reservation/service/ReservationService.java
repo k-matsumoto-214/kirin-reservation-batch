@@ -75,8 +75,8 @@ public class ReservationService {
 			// 予約開始時刻を取得
 			LocalDateTime targetTime = timeConfig.getTargetTime(reservationTime, clock);
 
-			// 予約開始時間まで待機
-			timeConfig.until(targetTime, clock);
+//			// 予約開始時間まで待機
+//			timeConfig.until(targetTime, clock);
 
 			log.info("予約開始");
 
