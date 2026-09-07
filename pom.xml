@@ -147,7 +147,7 @@
 
     <!-- ビルド設定 -->
     <build>
-        <finalName>kirin-reservation-batch</finalName>
+        <finalName>reservation-batch</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
