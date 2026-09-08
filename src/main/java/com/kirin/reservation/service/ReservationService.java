@@ -99,7 +99,35 @@ public class ReservationService {
 				js.executeScript("arguments[0].click();", userCheckElement);
 			}
 
+			log.info("==== フォームのバリデーション（入力漏れ）チェック開始 ====");
+			try {
+				JavascriptExecutor js = (JavascriptExecutor) webDriver;
+				// 💡 画面上のすべての入力項目（input, select, textarea）をスキャンし、エラーがあるものをログに出します
+				String checkScript =
+						"var results = [];" +
+								"var inputs = document.querySelectorAll('input, select, textarea');" +
+								"inputs.forEach(function(el) {" +
+								"  if (!el.checkValidity()) {" +
+								"    results.push(el.name + ' [' + el.id + '] のエラー原因: ' + el.validationMessage + ' (現在の値: ' + el.value + ')');" +
+								"  }" +
+								"});" +
+								"return results.join('\\n');";
+
+				String validationErrors = (String) js.executeScript(checkScript);
+
+				if (validationErrors == null || validationErrors.isEmpty()) {
+					log.info("【検証結果】フォームの入力項目にエラーはありません。すべて正常に入力されています。");
+				} else {
+					log.error("【警告！入力エラー発見】以下の項目が原因で、ブラウザがクリックをブロックしています：\n" + validationErrors);
+				}
+			} catch (Exception e) {
+				log.error("バリデーションチェック中にエラー: " + e.getMessage());
+			}
+			log.info("================================================");
+
 			log.info("予約ボタンをクリック");
+// ...以降のボタンクリック処理
+
 
 			// 予約実行
 			JavascriptExecutor js = (JavascriptExecutor) webDriver;
