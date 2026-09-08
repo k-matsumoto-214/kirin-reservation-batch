@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -84,62 +85,31 @@ public class ReservationService {
 			// 予約開始時間になったら予約画面を開く
 			webDriver.get(webConfig.reservationUrl(reservationTime, clock));
 
-			// 予約対象者のチェックを確認する
-			boolean isChecked = webDriver.findElement(webConfig.userIdSelector()).isSelected();
+			WebElement actualInput = webDriver.findElement(webConfig.userIdSelector());
+
+			boolean isChecked = actualInput.isSelected();
 
 			if (isChecked) {
 				log.info("【判定】すでにチェック済みです");
 			} else {
 				log.info("【判定】チェックされていないので対象者をチェックします");
 
-				// 💡 通常のクリックを実行
-				webDriver.findElement(webConfig.userIdSelector()).click();
-
-				// 🔍 【重要】クリックした直後に、本当にONになったか再確認する
-				boolean doubleCheck = webDriver.findElement(webConfig.userIdSelector()).isSelected();
-				if (doubleCheck) {
-					log.info("【確認結果】成功：チェックボックスが [ON] になりました！");
-				} else {
-					log.error("【確認結果】失敗：クリックを送信しましたが、チェックが入っていません！（空振りしています）");
-
-					// 🛠️ 空振りしていた場合の保険として、JavaScriptで強制的にONにする
-					log.info("JavaScriptで強制チェックを試みます");
-					JavascriptExecutor js = (JavascriptExecutor) webDriver;
-					js.executeScript("arguments[0].click();", webDriver.findElement(webConfig.userIdSelector()));
-				}
-			}
-
-			log.info("予約ボタンをクリック");
-
-
-			log.info("==== フォームのバリデーション（入力漏れ）チェック開始 ====");
-			try {
 				JavascriptExecutor js = (JavascriptExecutor) webDriver;
-				// 💡 画面上のすべての入力項目（input, select, textarea）をスキャンし、エラーがあるものをログに出します
-				String checkScript =
-						"var results = [];" +
-								"var inputs = document.querySelectorAll('input, select, textarea');" +
-								"inputs.forEach(function(el) {" +
-								"  if (!el.checkValidity()) {" +
-								"    results.push(el.name + ' [' + el.id + '] のエラー原因: ' + el.validationMessage + ' (現在の値: ' + el.value + ')');" +
-								"  }" +
-								"});" +
-								"return results.join('\\n');";
 
-				String validationErrors = (String) js.executeScript(checkScript);
+				String forceCheckScript =
+						"arguments[0].checked = true;" +
+								"arguments[0].dispatchEvent(new Event('change', { bubbles: true }));";
 
-				if (validationErrors == null || validationErrors.isEmpty()) {
-					log.info("【検証結果】フォームの入力項目にエラーはありません。すべて正常に入力されています。");
+				js.executeScript(forceCheckScript, actualInput);
+
+				if (actualInput.isSelected()) {
+					log.info("【確認結果】成功：チェックボックス（ID: " + actualInput.getAttribute("id") + "）が [ON] になりました！");
 				} else {
-					log.error("【警告！入力エラー発見】以下の項目が原因で、ブラウザがクリックをブロックしています：\n" + validationErrors);
+					log.error("【確認結果】失敗：これでもONにならない場合は要素が見つかっていません");
 				}
-			} catch (Exception e) {
-				log.error("バリデーションチェック中にエラー: " + e.getMessage());
 			}
-			log.info("================================================");
 
 			log.info("予約ボタンをクリック");
-// ...以降のボタンクリック処理
 
 
 			// 予約実行
