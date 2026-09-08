@@ -78,7 +78,7 @@ public class ReservationService {
 			LocalDateTime targetTime = timeConfig.getTargetTime(reservationTime, clock);
 
 			// 予約開始時間まで待機
-//			timeConfig.until(targetTime, clock);
+			timeConfig.until(targetTime, clock);
 
 			log.info("予約開始");
 
@@ -110,7 +110,7 @@ public class ReservationService {
 			}
 
 			log.info("予約ボタンをクリック処理（アラート自動承認化）");
-			
+
 			JavascriptExecutor js = (JavascriptExecutor) webDriver;
 			js.executeScript("window.confirm = function(msg) { return true; };");
 
