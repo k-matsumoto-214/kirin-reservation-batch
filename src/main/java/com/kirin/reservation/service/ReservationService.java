@@ -11,13 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -101,21 +98,10 @@ public class ReservationService {
 			}
 
 			log.info("予約ボタンをクリック");
-// 1. 予約実行ボタンの要素を取得
+			
 			WebElement executeButton = webDriver.findElement(webConfig.executeSelector());
-
-// 💡 対策：JavaScriptを使ってボタンを直接・強制的にクリックする
-// これにより、画面のズレやブロックを無視して、onclick="return confirm(...)" を最速で発火させます
 			JavascriptExecutor js = (JavascriptExecutor) webDriver;
-			js.executeScript("arguments[0].click();", executeButton);
-
-			log.info("最終確認アラートをクリック");
-
-// 2. アラートの確認を受け入れる（表示された瞬間に即座に実行されます）
-			new WebDriverWait(webDriver, Duration.ofSeconds(3))
-					.until(ExpectedConditions.alertIsPresent());
-
-			webDriver.switchTo().alert().accept();
+			js.executeScript("arguments[0].form.submit();", executeButton);
 
 			log.info("予約完了");
 
