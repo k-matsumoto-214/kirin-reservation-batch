@@ -56,7 +56,7 @@ class KirinWebConfigSpec extends Specification {
         def actual = kirinWebConfig.executeSelector()
 
         then:
-        actual == By.cssSelector("#reserve > div > form > ul > li > input")
+        actual == By.cssSelector(".action_save")
     }
 
     def "reservationOrderSelector()_予約順セレクター取得"() {
