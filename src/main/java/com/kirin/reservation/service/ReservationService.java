@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -77,8 +76,8 @@ public class ReservationService {
 			// 予約開始時刻を取得
 			LocalDateTime targetTime = timeConfig.getTargetTime(reservationTime, clock);
 
-//			// 予約開始時間まで待機
-//			timeConfig.until(targetTime, clock);
+			// 予約開始時間まで待機
+			timeConfig.until(targetTime, clock);
 
 			log.info("予約開始");
 
@@ -86,18 +85,32 @@ public class ReservationService {
 			webDriver.get(webConfig.reservationUrl(reservationTime, clock));
 
 			// 予約対象者のチェックを確認する
-			WebElement userCheckElement = webDriver.findElement(webConfig.userIdSelector());
-			boolean isChecked = userCheckElement.isSelected();
+			boolean isChecked = webDriver.findElement(webConfig.userIdSelector()).isSelected();
 
 			if (isChecked) {
-				log.info("チェック済み");
+				log.info("【判定】すでにチェック済みです");
+			} else {
+				log.info("【判定】チェックされていないので対象者をチェックします");
+
+				// 💡 通常のクリックを実行
+				webDriver.findElement(webConfig.userIdSelector()).click();
+
+				// 🔍 【重要】クリックした直後に、本当にONになったか再確認する
+				boolean doubleCheck = webDriver.findElement(webConfig.userIdSelector()).isSelected();
+				if (doubleCheck) {
+					log.info("【確認結果】成功：チェックボックスが [ON] になりました！");
+				} else {
+					log.error("【確認結果】失敗：クリックを送信しましたが、チェックが入っていません！（空振りしています）");
+
+					// 🛠️ 空振りしていた場合の保険として、JavaScriptで強制的にONにする
+					log.info("JavaScriptで強制チェックを試みます");
+					JavascriptExecutor js = (JavascriptExecutor) webDriver;
+					js.executeScript("arguments[0].click();", webDriver.findElement(webConfig.userIdSelector()));
+				}
 			}
 
-			if (!isChecked) {
-				log.info("チェックされていないので対象者をチェック");
-				JavascriptExecutor js = (JavascriptExecutor) webDriver;
-				js.executeScript("arguments[0].click();", userCheckElement);
-			}
+			log.info("予約ボタンをクリック");
+
 
 			log.info("==== フォームのバリデーション（入力漏れ）チェック開始 ====");
 			try {
