@@ -9,10 +9,13 @@ import com.kirin.reservation.repository.database.ReservationDateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -95,14 +98,25 @@ public class ReservationService {
 				webDriver.findElement(webConfig.userIdSelector()).click();
 			}
 
+			log.info("予約ボタンをクリック");
+
 			// 予約実行
 			webDriver.findElement(webConfig.executeSelector()).click();
 
+			log.info("最終確認アラートをクリック");
+
 			// アラートの確認を受け入れる
+			new WebDriverWait(webDriver, Duration.ofSeconds(3))
+					.until(ExpectedConditions.alertIsPresent());
+
 			webDriver.switchTo().alert().accept();
+
+			log.info("予約完了");
 
 			// 予約受付番号を取得する
 			final String reservationOrderString = webDriver.findElement(webConfig.reservationOrderSelector()).getText();
+
+			log.info("予約情報取得完了");
 
 			return Integer.parseInt(reservationOrderString);
 
