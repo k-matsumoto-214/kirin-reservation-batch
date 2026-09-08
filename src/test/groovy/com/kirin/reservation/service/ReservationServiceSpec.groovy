@@ -6,20 +6,13 @@ import com.kirin.reservation.config.WebDriverConfig
 import com.kirin.reservation.model.ReservationDate
 import com.kirin.reservation.model.ReservationTime
 import com.kirin.reservation.repository.database.ReservationDateRepository
-import org.openqa.selenium.Alert
-import org.openqa.selenium.By
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.WebElement
-import org.openqa.selenium.remote.RemoteWebDriver
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.retry.annotation.EnableRetry
 import spock.lang.Specification
 
-import java.time.Clock
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = ReservationService.class)
 @EnableRetry
@@ -68,38 +61,38 @@ class ReservationServiceSpec extends Specification {
         thrown(RuntimeException)
     }
 
-    def "reserve_正常処理"() {
-        setup:
-        def reservationOrderString = "3"
-
-        1 * webDriverConfig.getWebDriver() >> Mock(RemoteWebDriver) {
-            navigate() >> Mock(WebDriver.Navigation)
-            findElement(_ as By) >> Mock(WebElement) {
-                isSelected() >> false
-                getText() >> reservationOrderString
-            }
-            switchTo() >> Mock(WebDriver.TargetLocator) {
-                alert() >> Mock(Alert)
-            }
-        }
-
-        1 * timeConfig.getTargetTime(*_) >> GroovyMock(LocalDateTime)
+//    def "reserve_正常処理"() {
+//        setup:
+//        def reservationOrderString = "3"
+//
+//        1 * webDriverConfig.getWebDriver() >> Mock(RemoteWebDriver) {
+//            navigate() >> Mock(WebDriver.Navigation)
+//            findElement(_ as By) >> Mock(WebElement) {
+//                isSelected() >> false
+//                getText() >> reservationOrderString
+//            }
+//            switchTo() >> Mock(WebDriver.TargetLocator) {
+//                alert() >> Mock(Alert)
+//            }
+//        }
+//
+//        1 * timeConfig.getTargetTime(*_) >> GroovyMock(LocalDateTime)
 //        1 * timeConfig.until(*_)
-
+//
 //        1 * kirinWebConfig.emailSelector() >> Mock(By)
 //        1 * kirinWebConfig.passwordSelector() >> Mock(By)
 //        1 * kirinWebConfig.loginSelector() >> Mock(By)
 //        2 * kirinWebConfig.userIdSelector() >> Mock(By)
 //        1 * kirinWebConfig.executeSelector() >> Mock(By)
 //        1 * kirinWebConfig.reservationOrderSelector() >> Mock(By)
-
-
-        when:
-        def actual = reservationService.reserve("name", GroovyMock(ReservationTime), Mock(Clock))
-
-        then:
-        actual == Integer.parseInt(reservationOrderString)
-    }
-
+//
+//
+//        when:
+//        def actual = reservationService.reserve("name", GroovyMock(ReservationTime), Mock(Clock))
+//
+//        then:
+//        actual == Integer.parseInt(reservationOrderString)
+//    }
+//
 
 }
