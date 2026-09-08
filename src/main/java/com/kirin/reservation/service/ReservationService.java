@@ -111,13 +111,19 @@ public class ReservationService {
 
 			log.info("予約ボタンをクリック");
 
+			WebElement executeButton = webDriver.findElement(webConfig.executeSelector());
 
-			// 予約実行
 			JavascriptExecutor js = (JavascriptExecutor) webDriver;
-			js.executeScript("window.confirm = function(msg) { return true; };");
-			webDriver.findElement(webConfig.executeSelector()).click();
+			js.executeScript("arguments[0].click();", executeButton);
 
-			log.info("予約完了");
+			log.info("最終確認アラートの出現を最速で待機...");
+
+			new org.openqa.selenium.support.ui.WebDriverWait(webDriver, java.time.Duration.ofSeconds(5))
+					.until(org.openqa.selenium.support.ui.ExpectedConditions.alertIsPresent());
+
+			webDriver.switchTo().alert().accept();
+
+			log.info("予約フォームの送信に成功しました（画面遷移開始）");
 
 			// 予約受付番号を取得する
 			final String reservationOrderString = webDriver.findElement(webConfig.reservationOrderSelector()).getText();
