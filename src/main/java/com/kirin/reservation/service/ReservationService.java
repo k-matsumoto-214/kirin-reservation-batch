@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -98,10 +97,11 @@ public class ReservationService {
 			}
 
 			log.info("予約ボタンをクリック");
-			
-			WebElement executeButton = webDriver.findElement(webConfig.executeSelector());
+
+			// 予約実行
 			JavascriptExecutor js = (JavascriptExecutor) webDriver;
-			js.executeScript("arguments[0].form.submit();", executeButton);
+			js.executeScript("window.confirm = function(msg) { return true; };");
+			webDriver.findElement(webConfig.executeSelector()).click();
 
 			log.info("予約完了");
 
