@@ -111,19 +111,25 @@ public class ReservationService {
 
 			log.info("予約ボタンをクリック");
 
+// 1. 予約ボタンの要素を正しく取得
 			WebElement executeButton = webDriver.findElement(webConfig.executeSelector());
 
+// 💡 最終対策：引数として渡した要素オブジェクトに対して、ブラウザのJavaScriptエンジン上で直接 .click() を実行します
+// これにより、ヘッドレスChrome 144特有の送信ブロックバグを完全に回避し、onclick="return confirm(...)" を強制発火させます
 			JavascriptExecutor js = (JavascriptExecutor) webDriver;
 			js.executeScript("arguments[0].click();", executeButton);
 
 			log.info("最終確認アラートの出現を最速で待機...");
 
+// 2. 出現したアラートを捕まえる
 			new org.openqa.selenium.support.ui.WebDriverWait(webDriver, java.time.Duration.ofSeconds(5))
 					.until(org.openqa.selenium.support.ui.ExpectedConditions.alertIsPresent());
 
+// 3. アラートの「OK」をクリック
 			webDriver.switchTo().alert().accept();
 
 			log.info("予約フォームの送信に成功しました（画面遷移開始）");
+
 
 			// 予約受付番号を取得する
 			final String reservationOrderString = webDriver.findElement(webConfig.reservationOrderSelector()).getText();
