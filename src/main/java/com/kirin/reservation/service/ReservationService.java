@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -85,7 +86,8 @@ public class ReservationService {
 			webDriver.get(webConfig.reservationUrl(reservationTime, clock));
 
 			// 予約対象者のチェックを確認する
-			boolean isChecked = webDriver.findElement(webConfig.userIdSelector()).isSelected();
+			WebElement userCheckElement = webDriver.findElement(webConfig.userIdSelector());
+			boolean isChecked = userCheckElement.isSelected();
 
 			if (isChecked) {
 				log.info("チェック済み");
@@ -93,7 +95,8 @@ public class ReservationService {
 
 			if (!isChecked) {
 				log.info("チェックされていないので対象者をチェック");
-				webDriver.findElement(webConfig.userIdSelector()).click();
+				JavascriptExecutor js = (JavascriptExecutor) webDriver;
+				js.executeScript("arguments[0].click();", userCheckElement);
 			}
 
 			log.info("予約ボタンをクリック");
